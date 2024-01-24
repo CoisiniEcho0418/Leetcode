@@ -7,6 +7,7 @@
 - 方法一（调用`Arrays.asList()`）：
 
   ```java
+  // 转换后的list操作仍然反映在原数组上，因此这个list是定长的，无法使用list的add()喝remove()方法(无法进行添加删除操作)
   String[] s = new String[]{"A", "B", "C", "D","E"};
   List<String> list = Arrays.asList(s);
   ```
@@ -81,7 +82,7 @@ List list = new ArrayList<>(set);
 
   ```java
   // String[] arr
-  set = new HashSet<>(Arrays.asList(arr));
+  Set<String> set = new HashSet<>(Arrays.asList(arr));
   ```
 
   推荐方法三
