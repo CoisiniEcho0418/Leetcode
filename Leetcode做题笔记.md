@@ -97,7 +97,17 @@
    著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
    ```
 
-   
+3. [42. 接雨水 - 力扣（LeetCode）](https://leetcode.cn/problems/trapping-rain-water/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目描述：**给定 `n` 个非负整数表示每个宽度为 `1` 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+   **解题思路：**先从左往右循环，找到高度递增的柱子，并计算相邻两根柱子之间的接雨量，此时循环完之后即可得知最高柱子的下标。然后再从右往左循环（循环到最高柱子的下标即可），按照从左往右循环相反的逻辑，找到从右往左递增的柱子，并计算相邻两根柱子之间的接雨量。如此汇总即可得出总的接雨量。
+
+   > 个人题解放在双指针目录下：`.\双指针\trapping-rain-water.java`
+
+   ![image-20240126223144361](D:\Desktop\Leetcode\assets\image-20240126223144361.png)
+
+
 
 ## 子串
 
@@ -124,6 +134,86 @@
            }
    
            return  total;
+       }
+   }
+   ```
+
+2. [239. 滑动窗口最大值 - 力扣（LeetCode）](https://leetcode.cn/problems/sliding-window-maximum/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到数组的最右侧。求滑动过程中，每个窗口中的最大值
+
+   **解题思路（单调队列）：**
+
+   ![image-20240126223852331](D:\Desktop\Leetcode\assets\image-20240126223852331.png)
+
+   > 个人题解放在子串目录下：`.\子串\sliding-window-maximum.java`
+
+   
+
+3. [76. 最小覆盖子串 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-window-substring/description/?envType=study-plan-v2&envId=top-100-liked)
+
+
+
+## 数组
+
+1. [238. 除自身以外数组的乘积 - 力扣（LeetCode）](https://leetcode.cn/problems/product-of-array-except-self/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**一个整数数组 `nums`，返回 *数组 `answer` ，其中 `answer[i]` 等于 `nums` 中除 `nums[i]` 之外其余各元素的乘积* 。**不能使用除法，且在 `O(n)` 时间复杂度内完成此题。**
+
+   **题目思路：**`answer[i]` = 其前缀积 * 后缀积
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int[] productExceptSelf(int[] nums) {
+           int[] ans = new int[nums.length];
+           Arrays.fill(ans,1);             // 给数组赋初值，不然全为0
+           int left=1,right=1;                 // left：从左边累乘，right：从右边累乘
+           // 将计算前缀积和后缀积放在一个for循环里面
+           for(int i=0;i< nums.length;i++){    //最终每个元素其左右乘积进行相乘得出结果
+               ans[i]*=left;                   //乘以其左边的乘积
+               left*=nums[i];
+   
+               ans[nums.length-i-1]*=right;    //乘以其右边的乘积
+               right*=nums[nums.length-i-1];
+           }
+           return ans;
+       }
+   }
+   ```
+
+2. [41. 缺失的第一个正数 - 力扣（LeetCode）](https://leetcode.cn/problems/first-missing-positive/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个未排序的整数数组 `nums` ，请你找出其中没有出现的最小的正整数。**（要求`O(N)`的时间复杂度和`O(1)`的空间复杂度）**
+
+   **解题思路（标志法，原地算法）：**先将所有的负数都表示成一个大于N的数，然后遍历数组，把所有在 [1,*N*] 范围内的数对应下标（N-1）的元素置为负数。然后再次遍历处理后的数组，得到的第一个大于0的元素其对应的整数（下标+1）即为缺失的第一个正数。（若数组元素都小于0，则说明 N+1 是缺失的第一个正数）
+
+   ![image-20240126230706090](D:\Desktop\Leetcode\assets\image-20240126230706090.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int firstMissingPositive(int[] nums) {
+           int n = nums.length;
+           for(int i=0;i<n;i++){
+               if(nums[i]<=0){
+                   nums[i]=n+1;
+               }
+           }
+           for(int num:nums){
+               int temp = Math.abs(num);
+               if(temp<=n){
+                   nums[temp-1]=-Math.abs(nums[temp-1]);
+               }
+           }
+           for(int i=0;i<n;i++){
+               if(nums[i]>0){
+                   return i+1;
+               }
+           }
+           return n+1;
        }
    }
    ```
