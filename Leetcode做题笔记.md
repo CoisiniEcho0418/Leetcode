@@ -219,3 +219,45 @@
    ```
 
    
+
+## 矩阵
+
+1. [240. 搜索二维矩阵 II - 力扣（LeetCode）](https://leetcode.cn/problems/search-a-2d-matrix-ii/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**编写一个高效的算法来搜索 `m x n` 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
+
+   - 每行的元素从左到右升序排列。
+   - 每列的元素从上到下升序排列。
+
+   **解题思路：**这题不是很难，下面提供一种我没想到的巧妙思路（**Z 字形查找**，时间复杂度`O(m+n)`，空间复杂度`O(1)`）
+
+   ![image-20240127202834803](D:\Desktop\Leetcode\assets\image-20240127202834803.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public boolean searchMatrix(int[][] matrix, int target) {
+           int m= matrix.length,n=matrix[0].length;
+           int i=0,j=n-1;
+           if(m==0||n==0) {
+               return false;
+           }
+           // 从矩阵的右上角开始搜索
+           while(i<m && j>=0){
+               if(target==matrix[i][j]){
+                   return true;
+               }
+               if(target>matrix[i][j]){
+                   i++;
+               }else{
+                   j--;
+               }
+           }
+   
+           return false;
+       }
+   }
+   ```
+
+   
