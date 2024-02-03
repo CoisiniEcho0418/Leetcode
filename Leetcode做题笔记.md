@@ -366,5 +366,103 @@
 
   
 
+## 二叉树
 
+1. [236. 二叉树的最近公共祖先 - 力扣（LeetCode）](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/description/?envType=study-plan-v2&envId=top-100-liked)
 
+   **题目简述：**找到二叉树两个结点的最近公共父节点
+
+   **解题思路（递归）：**
+
+   ![image-20240203191713250](D:\Desktop\Leetcode\assets\image-20240203191713250.png)
+
+   **解题代码（递归）：**
+
+   ```java
+   // 未简化版
+   class Solution {
+       public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+           if (root == null || root == p || root == q) {
+               //只要当前根节点是p和q中的任意一个，就返回（因为不能比这个更深了，再深p和q中的一个就没了）
+               return root;
+           }
+           //根节点不是p和q中的任意一个，那么就继续分别往左子树和右子树找p和q
+           TreeNode left = lowestCommonAncestor(root.left, p, q);
+           TreeNode right = lowestCommonAncestor(root.right, p, q);
+           //p和q都没找到，那就没有
+           if(left == null && right == null) {
+               return null;
+           }
+           //左子树没有p也没有q，就返回右子树的结果
+           if (left == null) {
+               return right;
+           }
+           //右子树没有p也没有q就返回左子树的结果
+           if (right == null) {
+               return left;
+           }
+           //左右子树都找到p和q了，那就说明p和q分别在左右两个子树上，所以此时的最近公共祖先就是root
+           return root;
+       }
+   }
+   
+   
+   // 简化版！
+   class Solution {
+       public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+           if (root == null || p == root || q == root) return root;
+           TreeNode left = lowestCommonAncestor(root.left, p, q);
+           TreeNode right = lowestCommonAncestor(root.right, p, q);
+           if (left != null && right != null) return root;
+           return left != null ? left : right;
+       }
+   }
+   ```
+
+   
+
+   **解题思路（存储父节点）：**哈希表存储所有节点的父节点，然后我们就可以利用节点的父节点信息从 p 结点开始不断往上跳，并记录已经访问过的节点，再从 q 节点开始不断往上跳，如果碰到已经访问过的节点，那么这个节点就是我们要找的最近公共祖先。
+
+   **算法：**
+
+   1. 从根节点开始遍历整棵二叉树，用哈希表记录每个节点的父节点指针。
+
+   2. 从 p 节点开始不断往它的祖先移动，并用数据结构记录已经访问过的祖先节点。
+   3. 同样，我们再从 q 节点开始不断往它的祖先移动，如果有祖先已经被访问过，即意味着这是 p 和 q 的深度最深的公共祖先，即 LCA 节点。
+
+   **解题代码（存储父节点）：**
+
+   ```java
+   class Solution {
+       Map<Integer, TreeNode> parent = new HashMap<Integer, TreeNode>();
+       Set<Integer> visited = new HashSet<Integer>();
+   
+       public void dfs(TreeNode root) {
+           if (root.left != null) {
+               parent.put(root.left.val, root);
+               dfs(root.left);
+           }
+           if (root.right != null) {
+               parent.put(root.right.val, root);
+               dfs(root.right);
+           }
+       }
+   
+       public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+           dfs(root);
+           while (p != null) {
+               visited.add(p.val);
+               p = parent.get(p.val);
+           }
+           while (q != null) {
+               if (visited.contains(q.val)) {
+                   return q;
+               }
+               q = parent.get(q.val);
+           }
+           return null;
+       }
+   }
+   ```
+
+   
