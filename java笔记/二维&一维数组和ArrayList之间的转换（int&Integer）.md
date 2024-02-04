@@ -18,6 +18,7 @@ list.toArray(new int[0][]);
   ```java
   // int[] 转 List<Integer>
   List<Integer> list1 = Arrays.stream(data).boxed().collect(Collectors.toList());
+  List<Integer> list1 = Arrays.stream(data).boxed().toList();
   // Arrays.stream(arr) 可以替换成IntStream.of(arr)。
   // 1.使用Arrays.stream将int[]转换成IntStream。
   // 2.使用IntStream中的boxed()装箱。将IntStream转换成Stream<Integer>。
