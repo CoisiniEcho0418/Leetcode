@@ -515,3 +515,102 @@
    ```
 
    
+
+## 回溯
+
+1. [78. 子集 - 力扣（LeetCode）](https://leetcode.cn/problems/subsets/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的子集（幂集）。解集 **不能** 包含重复的子集。
+
+   **解法一（迭代）：**可以把数组中的每一位与二进制串的一位相对应，用0和1来表示对应的整数是否出现在子集中，通过遍历0到2^n^-1即可得出所有子集。
+
+   ```java
+   class Solution {
+       List<Integer> t = new ArrayList<Integer>();
+       List<List<Integer>> ans = new ArrayList<List<Integer>>();
+   
+       public List<List<Integer>> subsets(int[] nums) {
+           int n = nums.length;
+           for (int mask = 0; mask < (1 << n); ++mask) {
+               t.clear();
+               for (int i = 0; i < n; ++i) {
+                   if ((mask & (1 << i)) != 0) {
+                       t.add(nums[i]);
+                   }
+               }
+               ans.add(new ArrayList<Integer>(t));
+           }
+           return ans;
+       }
+   }
+   ```
+
+   **解法二（递归官方版）：**采用深度优先搜索来递归，`dfs(cur,nums)`中的`cur`表示当前位置，通过根据当前位置对应的整数是否出现在子集中，可以分为两条支路，从而进行`dfs`递归，知道`cur==nums.length`，此时表示数组中的所有整数是否出现都已经被确认，然后将数组记录下来。
+
+   ```java
+   class Solution {
+       List<Integer> t = new ArrayList<Integer>();
+       List<List<Integer>> ans = new ArrayList<List<Integer>>();
+   
+       public List<List<Integer>> subsets(int[] nums) {
+           dfs(0, nums);
+           return ans;
+       }
+   
+       public void dfs(int cur, int[] nums) {
+           if (cur == nums.length) {
+               // 记录答案
+               ans.add(new ArrayList<Integer>(t));
+               return;
+           }
+           // 考虑选择当前位置
+           t.add(nums[cur]);
+           dfs(cur + 1, nums);
+           // 考虑不选择当前位置
+           t.remove(t.size() - 1);
+           dfs(cur + 1, nums);
+       }
+   }
+   ```
+
+   **解法三（自己写的递归）：**为了避免添加重复的子集，规定子集中的整数要满足递增的顺序，否则就不添加到结果中。（在递归的每一层都可能产生新的子集添加到结果中，因为子集的大小从0增加到数组的大小）
+
+   ```java
+   class Solution {
+       List<List<Integer>> res = new ArrayList<>();
+       public List<List<Integer>> subsets(int[] nums) {
+           // 记录数组中的整数是否已经被添加到子集中
+           boolean[] visited = new boolean[nums.length];
+           Arrays.fill(visited,false);
+           res.add(new ArrayList<>());
+           // 先排序
+           Arrays.sort(nums);
+           backtrack(nums,new ArrayList<>(),visited);
+           return res;
+       }
+   
+       private void backtrack(int[] nums,List<Integer> list,boolean[] visited){
+           // 先判断子集的大小是否已经最大
+           if(list.size()== nums.length){
+               return;
+           }
+           for(int i=0;i< nums.length;i++){
+               if(!visited[i]){
+                   if(list.size()==0||nums[i]> list.get(list.size()-1)){// 确保子集中的元素递增
+                       // 新创建一个List，作为存储新子集的容器
+                       List<Integer> newList = new ArrayList<>(list);
+                       newList.add(nums[i]);
+                       visited[i]=true;
+                       res.add(newList);
+                       backtrack(nums,newList,visited);
+                       // 回溯完撤销之前的操作
+                       visited[i]=false;
+                   }
+               }
+           }
+   
+       }
+   }
+   ```
+
+   
