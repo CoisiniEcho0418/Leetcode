@@ -538,15 +538,16 @@
                        t.add(nums[i]);
                    }
                }
+               // 要新建一个List来存储结果
                ans.add(new ArrayList<Integer>(t));
            }
            return ans;
        }
    }
    ```
-
+   
    **解法二（递归官方版）：**采用深度优先搜索来递归，`dfs(cur,nums)`中的`cur`表示当前位置，通过根据当前位置对应的整数是否出现在子集中，可以分为两条支路，从而进行`dfs`递归，知道`cur==nums.length`，此时表示数组中的所有整数是否出现都已经被确认，然后将数组记录下来。
-
+   
    ```java
    class Solution {
        List<Integer> t = new ArrayList<Integer>();
@@ -558,8 +559,9 @@
        }
    
        public void dfs(int cur, int[] nums) {
+           // 注意是nums.length而不是nums.length-1
            if (cur == nums.length) {
-               // 记录答案
+               // 记录答案（注意要新建一个List来存储结果，不然后面的操作会修改之前存入的答案）
                ans.add(new ArrayList<Integer>(t));
                return;
            }
@@ -574,7 +576,7 @@
    ```
 
    **解法三（自己写的递归）：**为了避免添加重复的子集，规定子集中的整数要满足递增的顺序，否则就不添加到结果中。（在递归的每一层都可能产生新的子集添加到结果中，因为子集的大小从0增加到数组的大小）
-
+   
    ```java
    class Solution {
        List<List<Integer>> res = new ArrayList<>();
@@ -612,5 +614,5 @@
        }
    }
    ```
-
+   
    
