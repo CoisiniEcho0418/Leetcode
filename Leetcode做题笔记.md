@@ -616,3 +616,42 @@
    ```
    
    
+
+## 贪心
+
+1. [45. 跳跃游戏 II - 力扣（LeetCode）](https://leetcode.cn/problems/jump-game-ii/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个长度为 `n` 的 **0 索引**整数数组 `nums`，初始位置为 `nums[0]`。每个元素 `nums[i]` 表示从索引 `i` 向前跳转的最大长度。换句话说，如果你在 `nums[i]` 处，你可以跳转到任意 `nums[i + j]` 处。返回到达 `nums[n - 1]` 的最小跳跃次数。
+
+   **解题思路：**每次跳跃前先计算跳跃范围，然后依次计算这个范围内的各个坐标所能到达的最远位置，选取能到达最远位置的坐标作为这次跳跃的目的地，以此类推，直至到达终点。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int jump(int[] nums) {
+           if(nums.length==1){
+               return 0;
+           }
+           int max=0,maxIndex=0;
+           int count=1;
+           int begin=0,end=nums[0];
+           while (end< nums.length-1){
+               max=end;
+               maxIndex=begin;
+               for(int i=begin+1;i<=end;i++){
+                   if(i+nums[i]>max){
+                       max=i+nums[i];
+                       maxIndex=i;
+                   }
+               }
+               begin=maxIndex;
+               end=max;
+               count++;
+           }
+           return count;
+       }
+   }
+   ```
+
+   
