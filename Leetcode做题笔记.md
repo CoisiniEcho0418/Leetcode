@@ -655,3 +655,67 @@
    ```
 
    
+
+## 动态规划
+
+1. [198. 打家劫舍 - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个代表每个房屋存放金额的非负整数数组，在不能偷相邻房子的前提条件下，计算能够偷到的最大金额
+
+   **题解（有助于理解动态规划）**：[198. 打家劫舍 - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber/solutions/138131/dong-tai-gui-hua-jie-ti-si-bu-zou-xiang-jie-cjavap/?envType=study-plan-v2&envId=top-100-liked)
+
+   **解题思路：**![image-20240213000831896](D:\Desktop\Leetcode\assets\image-20240213000831896.png)
+
+   **解题代码：**
+
+   - 常规版
+
+     ```java
+     public int rob(int[] nums) {
+         if (nums.length == 0) {
+             return 0;
+         }
+         // 子问题：
+         // f(k) = 偷 [0..k) 房间中的最大金额
+     
+         // f(0) = 0
+         // f(1) = nums[0]
+         // f(k) = max{ rob(k-1), nums[k-1] + rob(k-2) }
+     
+         int N = nums.length;
+         int[] dp = new int[N+1];
+         dp[0] = 0;
+         dp[1] = nums[0];
+         for (int k = 2; k <= N; k++) {
+             dp[k] = Math.max(dp[k-1], nums[k-1] + dp[k-2]);
+         }
+         return dp[N];
+     }
+     ```
+
+     
+
+   - 空间优化版
+
+     ![image-20240213000924460](D:\Desktop\Leetcode\assets\image-20240213000924460.png)
+
+     ```java
+     public int rob(int[] nums) {
+         int prev = 0;
+         int curr = 0;
+     
+         // 每次循环，计算“偷到当前房子为止的最大金额”
+         for (int i : nums) {
+             // 循环开始时，curr 表示 dp[k-1]，prev 表示 dp[k-2]
+             // dp[k] = max{ dp[k-1], dp[k-2] + i }
+             int temp = Math.max(curr, prev + i);
+             prev = curr;
+             curr = temp;
+             // 循环结束时，curr 表示 dp[k]，prev 表示 dp[k-1]
+         }
+     
+         return curr;
+     }
+     ```
+
+     
