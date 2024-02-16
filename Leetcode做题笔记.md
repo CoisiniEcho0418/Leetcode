@@ -718,4 +718,65 @@
      }
      ```
 
-     
+2. [279. 完全平方数 - 力扣（LeetCode）](https://leetcode.cn/problems/perfect-squares/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个整数 `n` ，返回 *和为 `n` 的完全平方数的最少数量* 。
+
+   **解题思路：**![image-20240215133252295](D:\Desktop\Leetcode\assets\image-20240215133252295.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int numSquares(int n) {
+           int[] dp=new int[n+1];
+           dp[0]=0;
+           for(int i=1;i<=n;i++){
+               int minnum=Integer.MAX_VALUE;
+               for(int j=1;j*j<=i;j++){
+                   minnum=Math.min(minnum,dp[i-j*j]);
+               }
+               dp[i]=1+minnum;
+           }
+           return dp[n];
+       }
+   }
+   ```
+
+3. [139. 单词拆分 - 力扣（LeetCode）](https://leetcode.cn/problems/word-break/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`。
+
+   **解题思路：**![image-20240216234251182](D:\Desktop\Leetcode\assets\image-20240216234251182.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public boolean wordBreak(String s, List<String> wordDict) {
+           Set<String> set = new HashSet<>(wordDict);
+           boolean[] dp=new boolean[s.length()+1];
+           int maxLen=0;
+           // 找到字典列表最长单词的长度
+           for(String str:set){
+               maxLen=Math.max(maxLen,str.length());
+           }
+           dp[0]=true;
+           for(int i=1;i<=s.length();i++){
+               for(int j=0;j<i;j++){
+                   // 剪枝操作
+                   if(i-j>maxLen){
+                       continue;
+                   }
+                   if(dp[j]&&set.contains(s.substring(j,i))){
+                       dp[i]=true;
+                       break;
+                   }
+               }
+           }
+           return dp[s.length()];
+       }
+   }
+   ```
+
+   
