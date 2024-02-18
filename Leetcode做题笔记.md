@@ -779,4 +779,191 @@
    }
    ```
 
+4. [300. 最长递增子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-increasing-subsequence/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个整数数组 `nums` ，找到其中最长严格递增子序列的长度。**子序列** 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，`[3,6,2,7]` 是数组 `[0,3,1,6,2,2,7]` 的子序列。
+
+   **解题思路（解法一）：**![image-20240217192601972](D:\Desktop\Leetcode\assets\image-20240217192601972.png)
+
+   **解题代码（解法一：动态规划）：**
+
+   ```java
+   class Solution {
+       public int lengthOfLIS(int[] nums) {
+           if (nums.length == 0) {
+               return 0;
+           }
+           int[] dp = new int[nums.length];
+           dp[0] = 1;
+           int maxans = 1;
+           for (int i = 1; i < nums.length; i++) {
+               dp[i] = 1;
+               for (int j = 0; j < i; j++) {
+                   if (nums[i] > nums[j]) {
+                       dp[i] = Math.max(dp[i], dp[j] + 1);
+                   }
+               }
+               maxans = Math.max(maxans, dp[i]);
+           }
+           return maxans;
+       }
+   }
+   ```
+
+   **解题思路（解法二：贪心 + 二分查找）：**
+
+   ![image-20240218195521318](D:\Desktop\Leetcode\assets\image-20240218195521318.png)
+
+   **解题代码（解法二）：**
+
+   ```java
+   class Solution {
+       public int lengthOfLIS(int[] nums) {
+           if (nums.length == 0) {
+               return 0;
+           }
+           int len=1,n= nums.length;
+           int[] dp=new int[n+1];
+           dp[len]=nums[0];
+           for(int i=1;i< nums.length;i++){
+               if(nums[i]>dp[len]){
+                   dp[++len]=nums[i];
+               }else{
+                   int left=1,right=len-1;
+                   while (left<=right){
+                       int middle=(left+right)/2;
+                       if(dp[middle]==nums[i]){
+                           left=middle;
+                           break;
+                       } else if (dp[middle]>nums[i]) {
+                           right=middle-1;
+                       }else{
+                           left=middle+1;
+                       }
+                   }
+                   dp[left]=nums[i];
+               }
+           }
+           return len;
+       }
+   
+   }
+   ```
+
+5. [152. 乘积最大子数组 - 力扣（LeetCode）](https://leetcode.cn/problems/maximum-product-subarray/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+   **解题思路（动态规划法）：**![image-20240218195200804](D:\Desktop\Leetcode\assets\image-20240218195200804.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int maxProduct(int[] nums) {
+           if(nums.length==0){
+               return 0;
+           }
+           int[] min=new int[nums.length];
+           int[] max=new int[nums.length];
+           for(int i=0;i< nums.length;i++){
+               min[i]=nums[i];
+               max[i]=nums[i];
+           }
+           int maxn=max[0];
+           for(int i=1;i< nums.length;i++){
+               max[i]=Math.max(Math.max(max[i-1]*nums[i],min[i-1]*nums[i]),nums[i]);
+               min[i]=Math.min(Math.min(max[i-1]*nums[i],min[i-1]*nums[i]),nums[i]);
+               maxn=Math.max(maxn,max[i]);
+           }
+           return maxn;
+       }
+   }
+   ```
+
+6. [416. 分割等和子集 - 力扣（LeetCode）](https://leetcode.cn/problems/partition-equal-subset-sum/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+   **解题思路：**![image-20240219014555794](D:\Desktop\Leetcode\assets\image-20240219014555794.png)
+
+   ![image-20240219014614621](D:\Desktop\Leetcode\assets\image-20240219014614621.png)
+
+   **解题代码（未优化空间复杂度版）：**
+
+   ```java
+   class Solution {
+       public boolean canPartition(int[] nums) {
+           int n = nums.length;
+           if (n < 2) {
+               return false;
+           }
+           int sum = 0, maxNum = 0;
+           for (int num : nums) {
+               sum += num;
+               maxNum = Math.max(maxNum, num);
+           }
+           if (sum % 2 != 0) {
+               return false;
+           }
+           int target = sum / 2;
+           if (maxNum > target) {
+               return false;
+           }
+           boolean[][] dp = new boolean[n][target + 1];
+           for (int i = 0; i < n; i++) {
+               dp[i][0] = true;
+           }
+           dp[0][nums[0]] = true;
+           for (int i = 1; i < n; i++) {
+               int num = nums[i];
+               for (int j = 1; j <= target; j++) {
+                   if (j >= num) {
+                       dp[i][j] = dp[i - 1][j] | dp[i - 1][j - num];
+                   } else {
+                       dp[i][j] = dp[i - 1][j];
+                   }
+               }
+           }
+           return dp[n - 1][target];
+       }
+   }
+   ```
+
+   **解题代码（优化版）：**
+
+   ![image-20240219014750831](D:\Desktop\Leetcode\assets\image-20240219014750831.png)
+
+   ```java
+   class Solution {
+       public boolean canPartition(int[] nums) {
+           int n = nums.length;
+           if (n < 2) {
+               return false;
+           }
+           int sum = 0, maxNum = 0;
+           for (int num : nums) {
+               sum += num;
+               maxNum = Math.max(maxNum, num);
+           }
+           if (sum % 2 != 0) {
+               return false;
+           }
+           int target = sum / 2;
+           if (maxNum > target) {
+               return false;
+           }
+           boolean[] dp = new boolean[target + 1];
+           dp[0] = true;
+           for (int i = 0; i < n; i++) {
+               int num = nums[i];
+               for (int j = target; j >= num; --j) {
+                   dp[j] |= dp[j - num];
+               }
+           }
+           return dp[target];
+       }
+   }
+   ```
+
    
