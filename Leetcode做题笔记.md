@@ -967,3 +967,202 @@
    ```
 
    
+
+## 技巧
+
+1. [136. 只出现一次的数字 - 力扣（LeetCode）](https://leetcode.cn/problems/single-number/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
+
+   **解题思路：**用异或运算：
+
+   1. 交换律：a ^ b ^ c <=> a ^ c ^ b
+   2. 任何数于0异或为任何数 0 ^ n => n
+   3. 相同的数异或为0: n ^ n => 0
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int singleNumber(int[] nums) {
+           int res=0;
+           for(int num:nums){
+               res^=num;
+           }
+           return res;
+       }
+   }
+   ```
+
+2. [169. 多数元素 - 力扣（LeetCode）](https://leetcode.cn/problems/majority-element/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。
+
+   **解题思路：**该题目的解法众多，这里只介绍最为巧妙的时间复杂度为 O(n)、空间复杂度为 O(1) 的算法(**Boyer-Moore 投票算法**)。![image-20240219183329622](D:\Desktop\Leetcode\assets\image-20240219183329622.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int majorityElement(int[] nums) {
+           int count = 0;
+           Integer candidate = null;
+   
+           for (int num : nums) {
+               if (count == 0) {
+                   candidate = num;
+               }
+               count += (num == candidate) ? 1 : -1;
+           }
+   
+           return candidate;
+       }
+   }
+   ```
+
+3. [287. 寻找重复数 - 力扣（LeetCode）](https://leetcode.cn/problems/find-the-duplicate-number/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定一个包含 `n + 1` 个整数的数组 `nums` ，其数字都在 `[1, n]` 范围内（包括 `1` 和 `n`），可知至少存在一个重复的整数。假设 `nums` 只有 **一个重复的整数** ，返回 **这个重复的数** 。你设计的解决方案必须 **不修改** 数组 `nums` 且只用常量级 `O(1)` 的额外空间
+
+   **解题思路：**此题较难，直接看官方题解，三种思路（最后一种线性时间复杂度）[287. 寻找重复数 - 力扣（LeetCode）](https://leetcode.cn/problems/find-the-duplicate-number/solutions/261119/xun-zhao-zhong-fu-shu-by-leetcode-solution/?envType=study-plan-v2&envId=top-100-liked)
+
+   **解题代码：**
+
+   ```java
+   // 二分查找法
+   class Solution {
+       public int findDuplicate(int[] nums) {
+           int n = nums.length;
+           int l = 1, r = n - 1, ans = -1;
+           while (l <= r) {
+               int mid = (l + r) >> 1;
+               int cnt = 0;
+               for (int i = 0; i < n; ++i) {
+                   if (nums[i] <= mid) {
+                       cnt++;
+                   }
+               }
+               if (cnt <= mid) {
+                   l = mid + 1;
+               } else {
+                   r = mid - 1;
+                   ans = mid;
+               }
+           }
+           return ans;
+       }
+   }
+   ```
+
+   ```java
+   // 二进制法
+   class Solution {
+       public int findDuplicate(int[] nums) {
+           int n = nums.length, ans = 0;
+           int bit_max = 31;
+           while (((n - 1) >> bit_max) == 0) {
+               bit_max -= 1;
+           }
+           for (int bit = 0; bit <= bit_max; ++bit) {
+               int x = 0, y = 0;
+               for (int i = 0; i < n; ++i) {
+                   if ((nums[i] & (1 << bit)) != 0) {
+                       x += 1;
+                   }
+                   if (i >= 1 && ((i & (1 << bit)) != 0)) {
+                       y += 1;
+                   }
+               }
+               if (x > y) {
+                   ans |= 1 << bit;
+               }
+           }
+           return ans;
+       }
+   }
+   ```
+
+   ```java
+   // 快慢指针法
+   class Solution {
+       public int findDuplicate(int[] nums) {
+           int slow = 0, fast = 0;
+           do {
+               slow = nums[slow];
+               fast = nums[nums[fast]];
+           } while (slow != fast);
+           slow = 0;
+           while (slow != fast) {
+               slow = nums[slow];
+               fast = nums[fast];
+           }
+           return slow;
+       }
+   }
+   ```
+
+4. [31. 下一个排列 - 力扣（LeetCode）](https://leetcode.cn/problems/next-permutation/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**整数数组的 **下一个排列** 是指其整数的下一个字典序更大的排列。更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的 **下一个排列** 就是在这个有序容器中排在它后面的那个排列。如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+
+   - 例如，`arr = [1,2,3]` 的下一个排列是 `[1,3,2]` 。
+   - 类似地，`arr = [2,3,1]` 的下一个排列是 `[3,1,2]` 。
+   - 而 `arr = [3,2,1]` 的下一个排列是 `[1,2,3]` ，因为 `[3,2,1]` 不存在一个字典序更大的排列。
+
+   给你一个整数数组 `nums` ，找出 `nums` 的下一个排列。
+
+   必须**[ 原地 ](https://baike.baidu.com/item/原地算法)**修改，只允许使用额外常数空间
+
+   **解题思路：**[31. 下一个排列 - 力扣（LeetCode）](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/?envType=study-plan-v2&envId=top-100-liked)
+
+   ![image-20240219232201934](D:\Desktop\Leetcode\assets\image-20240219232201934.png)
+
+   ![image-20240219232212766](D:\Desktop\Leetcode\assets\image-20240219232212766.png)
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240219232227788.png" alt="image-20240219232227788"  /><img src="D:\Desktop\Leetcode\assets\image-20240219232246705.png" alt="image-20240219232246705"  />
+
+   ![image-20240219232425716](D:\Desktop\Leetcode\assets\image-20240219232425716.png)![image-20240219232439059](D:\Desktop\Leetcode\assets\image-20240219232439059.png)![image-20240219232455564](D:\Desktop\Leetcode\assets\image-20240219232455564.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public void nextPermutation(int[] nums) {
+           if(nums.length<2){
+               return;
+           }
+           int i= nums.length-2,j= nums.length-1;
+           
+           // find: A[i]<A[j]
+           while (i>=0&&nums[i]>=nums[j]){
+               i--;
+               j--;
+           }
+           
+           if(i>=0){ // 不是最后一个排列
+               int k= nums.length-1;
+               while (nums[i]>=nums[k]){
+                   k--;
+               }
+               // swap A[i], A[k]
+               int temp=nums[k];
+               nums[k]=nums[i];
+               nums[i]=temp;
+           }
+           
+           // reverse A[j:end]
+           i=j;
+           j= nums.length-1;
+           while (i<j){
+               int temp=nums[j];
+               nums[j]=nums[i];
+               nums[i]=temp;
+               i++;
+               j--;
+           }
+       }
+   }
+   ```
+
+   
+
