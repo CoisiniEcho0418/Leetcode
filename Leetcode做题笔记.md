@@ -968,6 +968,290 @@
 
    
 
+## 堆
+
+1. [215. 数组中的第K个最大元素 - 力扣（LeetCode）](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定整数数组 `nums` 和整数 `k`，请返回数组中第 `**k**` 个最大的元素。请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+   **解题思路一（基于快速排序的选择方法）：**
+
+   ![image-20240220192235360](D:\Desktop\Leetcode\assets\image-20240220192235360.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int findKthLargest(int[] nums, int k) {
+           return quickSelect(nums, 0, nums.length - 1, nums.length - k);
+       }
+   
+       private int quickSelect(int[] nums, int left, int right, int target) {
+           int index = partition(nums, left, right);
+           if (index == target) {
+               return nums[index];
+           } else {
+               return index > target ? 
+                   quickSelect(nums, left, index - 1, target) : 
+                   quickSelect(nums, index + 1, right, target);
+           }
+       }
+   
+       private int partition(int[] nums, int left, int right) {
+           swap(nums, left, left + new Random().nextInt(right - left + 1));
+           int pivot = nums[left];
+           while (left < right) {
+               while (left < right && nums[right] > pivot) {
+                   right--;
+               }
+               if (left < right) {
+                   nums[left++] = nums[right];
+               }
+               while (left < right && nums[left] < pivot) {
+                   left++;
+               }
+               if (left < right) {
+                   nums[right--] = nums[left];
+               }
+           }
+           nums[left] = pivot;
+           return left;
+       }
+   
+       private void swap(int[] nums, int i, int j) {
+           int swap = nums[i];
+           nums[i] = nums[j];
+           nums[j] = swap;
+       }
+   }
+   ```
+
+   **解题思路二（计数排序）：**根据题目的约束条件，`-10000 <= nums[i] <= 10000`，可以构造一个大小为20001的桶，用来存放对应数在数组中的个数，然后从大往小依次遍历每个桶，输出第K大的元素。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int findKthLargest(int[] nums, int k) {
+           int[] buckets = new int[20001];
+           for(int i=0;i< nums.length;i++){
+               buckets[nums[i]+10000]++;
+           }
+           for (int i=20000;i>=0;i--){
+               k-=buckets[i];
+               if(k<=0){
+                   return i-10000;
+               }
+           }
+           return 0;
+       }
+   }
+   ```
+
+   **解题思路三（基于堆排序的选择方法）：**
+
+   也可以使用堆排序来解决这个问题——建立一个大根堆，做 k−1次删除操作后堆顶元素就是我们要找的答案。在这道题中尤其要搞懂「建堆」、「调整」和「删除」的过程（自己维护一个堆）。时间复杂度为`O(nlogn)`，空间复杂度为`O(logn)`
+
+   **解题代码：**
+
+   ```java
+   // 使用PriorityQueue来实现
+   import java.util.Comparator;
+   import java.util.PriorityQueue;
+   
+   public class Solution {
+   
+       public int findKthLargest(int[] nums, int k) {
+           int len = nums.length;
+           // 使用一个含有 k 个元素的最小堆，PriorityQueue 底层是动态数组，为了防止数组扩容产生消耗，可以先指定数组的长度
+           PriorityQueue<Integer> minHeap = new PriorityQueue<>(k, Comparator.comparingInt(a -> a));
+           // Java 里没有 heapify ，因此我们逐个将前 k 个元素添加到 minHeap 里
+           for (int i = 0; i < k; i++) {
+               minHeap.offer(nums[i]);
+           }
+   
+           for (int i = k; i < len; i++) {
+               // 看一眼，不拿出，因为有可能没有必要替换
+               Integer topElement = minHeap.peek();
+               // 只要当前遍历的元素比堆顶元素大，堆顶弹出，遍历的元素进去
+               if (nums[i] > topElement) {
+                   // Java 没有 replace()，所以得先 poll() 出来，然后再放回去
+                   minHeap.poll();
+                   minHeap.offer(nums[i]);
+               }
+           }
+           return minHeap.peek();
+       }
+   }
+   ```
+
+   ```java
+   // 使用PriorityQueue来实现的解法2
+   class Solution {
+       public int findKthLargest(int[] nums, int k) {
+           PriorityQueue<Integer> heap = new PriorityQueue<>();
+           for (int num : nums) {
+               heap.add(num);
+               if (heap.size() > k) {
+                   heap.poll();
+               }
+           }
+           return heap.peek();
+       }
+   }
+   ```
+
+   ```java
+   // 手动构造一个堆
+   class Solution {
+       public int findKthLargest(int[] nums, int k) {
+           buildHeap(nums,nums.length);
+           int size=nums.length;
+           for(int i=1;i<k;i++){
+               swap(nums,0,size-1);
+               size--;
+               maxHeapify(nums,0,size);
+           }
+           return nums[0];
+       }
+   
+       private void buildHeap(int[] nums,int size){
+           for(int i=size/2-1;i>=0;i--){
+               maxHeapify(nums,i,size);
+           }
+       }
+   
+       private void maxHeapify(int[] nums,int index, int size){
+           int child=2*index+1;
+           while (child<size){
+               if(child<size-1&&nums[child]<nums[child+1]){
+                   child++;
+               }
+               if(nums[index]>=nums[child]){
+                   break;
+               }
+               swap(nums,index,child);
+               index=child;
+               child=2*child+1;
+           }
+       }
+   
+       private void swap(int[] nums,int i,int j){
+           int temp=nums[i];
+           nums[i]=nums[j];
+           nums[j]=temp;
+       }
+   }
+   ```
+
+2. [347. 前 K 个高频元素 - 力扣（LeetCode）](https://leetcode.cn/problems/top-k-frequent-elements/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
+
+   **解题思路：**首先遍历整个数组，并使用哈希表记录每个数字出现的次数，并形成一个「出现次数数组」。然后维护一个大小为K的小顶堆，然后遍历「出现次数数组」：
+
+   - 如果堆的元素个数小于 k，就可以直接插入堆中。
+   - 如果堆的元素个数等于 k，则检查堆顶与当前出现次数的大小。如果堆顶更大，说明至少有 k 个数字的出现次数比当前值大，故舍弃当前值；否则，就弹出堆顶，并将当前值插入堆中。
+
+   **解题代码：**
+
+   ```java
+   // 官方的代码，把哈希表转换成一个大小为2的数组，第一个元素代表数组的值，第二个元素代表了该值出现的次数，然后再利用
+   // PriorityQueue来优化
+   class Solution {
+       public int[] topKFrequent(int[] nums, int k) {
+           Map<Integer, Integer> occurrences = new HashMap<Integer, Integer>();
+           for (int num : nums) {
+               occurrences.put(num, occurrences.getOrDefault(num, 0) + 1);
+           }
+   
+           // int[] 的第一个元素代表数组的值，第二个元素代表了该值出现的次数
+           PriorityQueue<int[]> queue = new PriorityQueue<int[]>(new Comparator<int[]>() {
+               public int compare(int[] m, int[] n) {
+                   return m[1] - n[1];
+               }
+           });
+           for (Map.Entry<Integer, Integer> entry : occurrences.entrySet()) {
+               int num = entry.getKey(), count = entry.getValue();
+               if (queue.size() == k) {
+                   if (queue.peek()[1] < count) {
+                       queue.poll();
+                       queue.offer(new int[]{num, count});
+                   }
+               } else {
+                   queue.offer(new int[]{num, count});
+               }
+           }
+           int[] ret = new int[k];
+           for (int i = 0; i < k; ++i) {
+               ret[i] = queue.poll()[0];
+           }
+           return ret;
+       }
+   }
+   ```
+
+3. [295. 数据流的中位数 - 力扣（LeetCode）](https://leetcode.cn/problems/find-median-from-data-stream/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**实现 MedianFinder 类:
+
+   - `MedianFinder() `初始化 `MedianFinder` 对象。
+   - `void addNum(int num)` 将数据流中的整数 `num` 添加到数据结构中。
+   - `double findMedian()` 返回到目前为止所有元素的中位数。与实际答案相差 `10-5` 以内的答案将被接受。
+
+   **解题思路一（优先队列）：**
+
+   ![image-20240221013842259](D:\Desktop\Leetcode\assets\image-20240221013842259.png)
+
+   **解题代码：**
+
+   ```java
+   class MedianFinder {
+       PriorityQueue<Integer> queMin;
+       PriorityQueue<Integer> queMax;
+   
+       public MedianFinder() {
+           queMin = new PriorityQueue<Integer>((a, b) -> (b - a));
+           queMax = new PriorityQueue<Integer>((a, b) -> (a - b));
+       }
+       
+       public void addNum(int num) {
+           if (queMin.isEmpty() || num <= queMin.peek()) {
+               queMin.offer(num);
+               if (queMax.size() + 1 < queMin.size()) {
+                   queMax.offer(queMin.poll());
+               }
+           } else {
+               queMax.offer(num);
+               if (queMax.size() > queMin.size()) {
+                   queMin.offer(queMax.poll());
+               }
+           }
+       }
+       
+       public double findMedian() {
+           if (queMin.size() > queMax.size()) {
+               return queMin.peek();
+           }
+           return (queMin.peek() + queMax.peek()) / 2.0;
+       }
+   }
+   ```
+
+   **解题思路二（有序集合 + 双指针）：**![image-20240221014009940](D:\Desktop\Leetcode\assets\image-20240221014009940.png)
+
+   **解题代码：**
+
+   ```java
+   
+   ```
+
+   
+
+
+
+
+
 ## 技巧
 
 1. [136. 只出现一次的数字 - 力扣（LeetCode）](https://leetcode.cn/problems/single-number/description/?envType=study-plan-v2&envId=top-100-liked)
