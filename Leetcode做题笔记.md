@@ -619,7 +619,7 @@
 
 ## 二分查找
 
-1. https://leetcode.cn/problems/median-of-two-sorted-arrays/description/?envType=study-plan-v2&envId=top-100-liked
+1. [4. 寻找两个正序数组的中位数 - 力扣（LeetCode）](https://leetcode.cn/problems/median-of-two-sorted-arrays/description/?envType=study-plan-v2&envId=top-100-liked)
 
    **题目简述：**给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的 **中位数** 。
 
@@ -1085,6 +1085,226 @@
 
    
 
+## 多维动态规划
+
+1. [5. 最长回文子串 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-palindromic-substring/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你一个字符串 `s`，找到 `s` 中最长的回文子串。
+
+   **解题思路（动态规划）：**
+
+   ![image-20240223170529318](D:\Desktop\Leetcode\assets\image-20240223170529318.png)
+
+   ![image-20240223170546111](D:\Desktop\Leetcode\assets\image-20240223170546111.png)
+
+   **解题代码：**
+
+   ```java
+   public class Solution {
+   
+       public String longestPalindrome(String s) {
+           int len = s.length();
+           if (len < 2) {
+               return s;
+           }
+   
+           int maxLen = 1;
+           int begin = 0;
+           // dp[i][j] 表示 s[i..j] 是否是回文串
+           boolean[][] dp = new boolean[len][len];
+           // 初始化：所有长度为 1 的子串都是回文串
+           for (int i = 0; i < len; i++) {
+               dp[i][i] = true;
+           }
+   
+           char[] charArray = s.toCharArray();
+           // 递推开始
+           // 先枚举子串长度
+           for (int L = 2; L <= len; L++) {
+               // 枚举左边界，左边界的上限设置可以宽松一些
+               for (int i = 0; i < len; i++) {
+                   // 由 L 和 i 可以确定右边界，即 j - i + 1 = L 得
+                   int j = L + i - 1;
+                   // 如果右边界越界，就可以退出当前循环
+                   if (j >= len) {
+                       break;
+                   }
+   
+                   if (charArray[i] != charArray[j]) {
+                       dp[i][j] = false;
+                   } else {
+                       if (j - i < 3) {
+                           dp[i][j] = true;
+                       } else {
+                           dp[i][j] = dp[i + 1][j - 1];
+                       }
+                   }
+   
+                   // 只要 dp[i][L] == true 成立，就表示子串 s[i..L] 是回文，此时记录回文长度和起始位置
+                   if (dp[i][j] && j - i + 1 > maxLen) {
+                       maxLen = j - i + 1;
+                       begin = i;
+                   }
+               }
+           }
+           return s.substring(begin, begin + maxLen);
+       }
+   }
+   ```
+
+   **解题思路（中心扩展算法）：**
+
+   ![image-20240223170921998](D:\Desktop\Leetcode\assets\image-20240223170921998.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public String longestPalindrome(String s) {
+           if(s.length()<=1){
+               return s;
+           }
+           int begin=0,maxLen=1;
+           for(int i=0;i<s.length();i++){
+               int[] len1=expand(i,i,s);
+               int[] len2=expand(i,i+1,s);
+               if(len1[1]>=len2[1]&&len1[1]>maxLen){
+                   maxLen=len1[1];
+                   begin=len1[0];
+               } else if (len2[1]>len1[1]&&len2[1]>maxLen) {
+                   maxLen=len2[1];
+                   begin=len2[0];
+               }
+           }
+           return s.substring(begin,begin+maxLen);
+       }
+       
+       // 返回以[left,right]为边界子串进行扩展的最长回文子串的信息，int[0]存储回文串的起始下标，int[1]存储回文串的长度
+       private int[] expand(int left,int right,String s){
+           int[] res=new int[2];
+           while (left>=0&&right< s.length()&&s.charAt(left)==s.charAt(right)){
+               left--;
+               right++;
+           }
+           res[0]=left+1;
+           res[1]=right-left-1;
+           return res;
+       }
+   }
+   ```
+
+2. [1143. 最长公共子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-common-subsequence/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长 **公共子序列** 的长度。如果不存在 **公共子序列** ，返回 `0` 。
+
+   一个字符串的 **子序列** 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。
+
+   - 例如，`"ace"` 是 `"abcde"` 的子序列，但 `"aec"` 不是 `"abcde"` 的子序列。
+
+   两个字符串的 **公共子序列** 是这两个字符串所共同拥有的子序列。
+
+   **解题思路：**用`DP[i][j]` 表示 `text1[0 ... i]` 和 `text2[0 ... j]` 的最长公共子序列。如果 text1[i] 等于 text2[j]，则 `DP[i][j] = DP[i - 1][j - 1] + 1`；否则，`DP[i][j] = max(DP[i - 1][j], DP[i][j - 1])`。边界条件：当 𝑖=0时，text1[0:𝑖]为空，空字符串和任何字符串的最长公共子序列的长度都是0，因此对于任意 0≤*j*≤*n*，有 `dp[0][𝑗]=0`。当 𝑗=0 时，text2[0:𝑗]为空，同理可得，对任意 0≤𝑖≤𝑚，有 `dp[𝑖][0]=0`。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int longestCommonSubsequence(String text1, String text2) {
+           int m = text1.length(), n = text2.length();
+           int[][] dp = new int[m + 1][n + 1];
+           for (int i = 1; i <= m; i++) {
+               char c1 = text1.charAt(i - 1);
+               for (int j = 1; j <= n; j++) {
+                   char c2 = text2.charAt(j - 1);
+                   if (c1 == c2) {
+                       dp[i][j] = dp[i - 1][j - 1] + 1;
+                   } else {
+                       dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                   }
+               }
+           }
+           return dp[m][n];
+       }
+   }
+   ```
+
+3. [72. 编辑距离 - 力扣（LeetCode）](https://leetcode.cn/problems/edit-distance/description/?envType=study-plan-v2&envId=top-100-liked)
+
+   **题目简述：**给你两个单词 `word1` 和 `word2`， *请返回将 `word1` 转换成 `word2` 所使用的最少操作数* 。
+
+   你可以对一个单词进行如下三种操作：
+
+   - 插入一个字符
+   - 删除一个字符
+   - 替换一个字符
+
+   **解题思路：**动态规划：
+   ![image-20240223220238860](D:\Desktop\Leetcode\assets\image-20240223220238860.png)
+
+   第一行，是 `word1` 为空变成 `word2` 最少步数，就是插入操作
+
+   第一列，是 `word2` 为空，需要的最少步数，就是删除操作
+
+   **解题代码：**
+
+   ```java
+   // 多维数组动态规划
+   class Solution {
+       public int minDistance(String word1, String word2) {
+           int[][] dp=new int[word1.length()+1][word2.length()+1];
+           dp[0][0]=0;
+           for(int j=1;j<=word2.length();j++){
+               dp[0][j]=dp[0][j-1]+1;
+           }
+           for(int i=1;i<=word1.length();i++){
+               dp[i][0]=dp[i-1][0]+1;
+           }
+           for(int i=1;i<=word1.length();i++){
+               for(int j=1;j<=word2.length();j++){
+                   if(word1.charAt(i-1)==word2.charAt(j-1)){
+                       dp[i][j]=dp[i-1][j-1];
+                   }else{
+                       dp[i][j]=Math.min(Math.min(dp[i-1][j-1],dp[i-1][j]),dp[i][j-1])+1;
+                   }
+               }
+           }
+           return dp[word1.length()][word2.length()];
+       }
+   }
+   ```
+
+   ```java
+   // 优化之后的一维数组动态规划
+   class Solution {
+       public int minDistance(String word1, String word2) {
+           char[] s=word1.toCharArray();
+           char[] t=word2.toCharArray();
+           int[] dp = new int[word2.length()+1];   // dp[i]表示从word1转换到word2前i个字符所需的最小次数
+           for(int j=1;j<=word2.length();j++){    // 当word1为空时，转换成word2前i个字符所需的最小次数
+               dp[j]=j;
+           }
+           for(int i=1;i<=word1.length();i++){ // 这里的i可以理解为二维dp[i][j]中的i
+               int pre = dp[0]++;  // pre的实质是二维动归中的dp[i-1][j-1], dp[0]++表示 dp[i+1][0]=dp[i][0]+1
+               for(int j=1;j<=word2.length();j++){
+                   int temp=dp[j];
+                   if(s[i-1]==t[j-1]){
+                       dp[j]=pre;
+                   }else{
+                       dp[j]=Math.min((Math.min(pre,dp[j])),dp[j-1])+1;
+                   }
+                   pre=temp;
+               }
+           }
+           return dp[word2.length()];
+       }
+   }
+   // 优化成一维的实质是只存储二维中的一行，然后在外层遍历中慢慢更新。
+   ```
+
+   
+
+
+
 ## 堆
 
 1. [215. 数组中的第K个最大元素 - 力扣（LeetCode）](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-100-liked)
@@ -1360,7 +1580,7 @@
    **解题代码：**
 
    ```java
-   
+   // 略……
    ```
 
    
