@@ -1155,6 +1155,107 @@
    }
    ```
 
+7. [32. 最长有效括号 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-valid-parentheses/description/)
+
+   **题目简述：**给你一个只包含 `'('` 和 `')'` 的字符串，找出最长有效（格式正确且连续）括号子串的长度。
+
+   **解题思路（动态规划）：**
+
+   ![image-20240225211307592](D:\Desktop\Leetcode\assets\image-20240225211307592.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int longestValidParentheses(String s) {
+           int maxans = 0;
+           int[] dp = new int[s.length()];
+           for (int i = 1; i < s.length(); i++) {
+               if (s.charAt(i) == ')') {
+                   if (s.charAt(i - 1) == '(') {
+                       dp[i] = (i >= 2 ? dp[i - 2] : 0) + 2;
+                   } else if (i - dp[i - 1] > 0 && s.charAt(i - dp[i - 1] - 1) == '(') {
+                       dp[i] = dp[i - 1] + ((i - dp[i - 1]) >= 2 ? dp[i - dp[i - 1] - 2] : 0) + 2;
+                   }
+                   maxans = Math.max(maxans, dp[i]);
+               }
+           }
+           return maxans;
+       }
+   }
+   ```
+
+   **解题思路（栈）：**
+
+   ![image-20240225213310567](D:\Desktop\Leetcode\assets\image-20240225213310567.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int longestValidParentheses(String s) {
+           int maxans = 0;
+           Deque<Integer> stack = new LinkedList<Integer>();
+           stack.push(-1);
+           for (int i = 0; i < s.length(); i++) {
+               if (s.charAt(i) == '(') {
+                   stack.push(i);
+               } else {
+                   stack.pop();
+                   if (stack.isEmpty()) {
+                       stack.push(i);
+                   } else {
+                       maxans = Math.max(maxans, i - stack.peek());
+                   }
+               }
+           }
+           return maxans;
+       }
+   }
+   ```
+
+   **解题思路（贪心，左右指针法）：**
+
+   [32. 最长有效括号 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-valid-parentheses/solutions/314683/zui-chang-you-xiao-gua-hao-by-leetcode-solution/)
+
+   ![image-20240225214940076](D:\Desktop\Leetcode\assets\image-20240225214940076.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int longestValidParentheses(String s) {
+           int left = 0, right = 0, maxlength = 0;
+           for (int i = 0; i < s.length(); i++) {
+               if (s.charAt(i) == '(') {
+                   left++;
+               } else {
+                   right++;
+               }
+               if (left == right) {
+                   maxlength = Math.max(maxlength, 2 * right);
+               } else if (right > left) {
+                   left = right = 0;
+               }
+           }
+           left = right = 0;
+           for (int i = s.length() - 1; i >= 0; i--) {
+               if (s.charAt(i) == '(') {
+                   left++;
+               } else {
+                   right++;
+               }
+               if (left == right) {
+                   maxlength = Math.max(maxlength, 2 * left);
+               } else if (left > right) {
+                   left = right = 0;
+               }
+           }
+           return maxlength;
+       }
+   }
+   ```
+
    
 
 ## 多维动态规划
@@ -1376,6 +1477,41 @@
    
 
 ## 栈
+
+> java官方文档推荐用[deque](https://so.csdn.net/so/search?q=deque&spm=1001.2101.3001.7020)实现栈（stack）。Deque是double ended queue，将其理解成双端结束的队列，双端队列，可以在首尾插入或删除元素（注意与Queue的区别，Queue是FIFO的单端队列，Deque是双端队列）。
+>
+> **接口分析：**
+>
+> - addFirst(): 向队头插入元素，如果元素为空，则发生NPE(空指针异常)
+>
+> - addLast(): 向队尾插入元素，如果为空，则发生NPE
+> - offerFirst(): 向队头插入元素，如果插入成功返回true，否则返回false
+> - offerLast(): 向队尾插入元素，如果插入成功返回true，否则返回false
+> - removeFirst(): 返回并移除队头元素，如果该元素是null，则发生NoSuchElementException
+> - removeLast(): 返回并移除队尾元素，如果该元素是null，则发生NoSuchElementException
+> - pollFirst(): 返回并移除队头元素，如果队列无元素，则返回null
+> - pollLast(): 返回并移除队尾元素，如果队列无元素，则返回null
+> - getFirst(): 获取队头元素但不移除，如果队列无元素，则发生NoSuchElementException
+> - getLast(): 获取队尾元素但不移除，如果队列无元素，则发生NoSuchElementException
+> - peekFirst(): 获取队头元素但不移除，如果队列无元素，则返回null
+> - peekLast(): 获取队尾元素但不移除，如果队列无元素，则返回null
+> - peek():获取队头元素但不移除，如果队列无元素，则返回null（用作栈时相当于top()操作）。
+> - pop(): 弹出栈中元素，也就是返回并移除队头元素，等价于removeFirst()，如果队列无元素，则发生NoSuchElementException
+> - push(): 向栈中压入元素，也就是向队头增加元素，等价于addFirst()，如果元素为null，则发生NPE，如果栈空间受到限制，则发生IllegalStateException
+>
+> **实现**
+>
+> - ArrayDeque: 基于数组实现的线性双向队列，通常作为栈或队列使用，但是栈的效率不如LinkedList高。
+> - LinkedList: 基于链表实现的链式双向队列，通常作为栈或队列使用，但是队列的效率不如ArrayQueue高。
+>
+> **代码示例**
+>
+> ```java
+> Deque<Integer> stack = new LinkedList<>();
+> stack.push(-1); // 入栈
+> stack.pop(); // 出栈
+> stack.peek() // 相当于top()操作，获取队头（栈顶）元素
+> ```
 
 1. [84. 柱状图中最大的矩形 - 力扣（LeetCode）](https://leetcode.cn/problems/largest-rectangle-in-histogram/description/?envType=study-plan-v2&envId=top-100-liked)
 
