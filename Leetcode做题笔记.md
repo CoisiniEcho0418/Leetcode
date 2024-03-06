@@ -40,6 +40,65 @@
    }
    ```
 
+3. [1. 两数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/two-sum/description/)
+
+   **题目简述：**给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出 **和为目标值** *`target`* 的那 **两个** 整数，并返回它们的数组下标。你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。
+
+   **解题思路（进阶版，时间复杂度为O(n)）：**使用哈希表，对于每一个 `x`，我们首先查询哈希表中是否存在 `target - x`，然后将 `x` 插入到哈希表中，即可保证不会让 `x` 和自己匹配。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int[] twoSum(int[] nums, int target) {
+           Map<Integer, Integer> hashtable = new HashMap<Integer, Integer>();
+           for (int i = 0; i < nums.length; ++i) {
+               if (hashtable.containsKey(target - nums[i])) {
+                   return new int[]{hashtable.get(target - nums[i]), i};
+               }
+               hashtable.put(nums[i], i);
+           }
+           return new int[0];
+       }
+   }
+   ```
+
+4. [454. 四数相加 II - 力扣（LeetCode）](https://leetcode.cn/problems/4sum-ii/description/)
+
+   **题目简述：**给你四个整数数组 `nums1`、`nums2`、`nums3` 和 `nums4` ，数组长度都是 `n` ，请你计算有多少个元组 `(i, j, k, l)` 能满足：
+
+   - `0 <= i, j, k, l < n`
+   - `nums1[i] + nums2[j] + nums3[k] + nums4[l] == 0`
+
+   **解题思路（分组 + 哈希表，O（n^2^））：**
+
+   ![image-20240306202241664](D:\Desktop\Leetcode\assets\image-20240306202241664.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+           Map<Integer,Integer>map=new HashMap<>();
+           int n= nums1.length;
+           int count=0;
+           for(int i=0;i<n;i++){
+               for(int j=0;j<n;j++){
+                   int sum=nums1[i]+nums2[j];
+                   map.put(sum,map.getOrDefault(sum,0)+1);
+               }
+           }
+           for(int i=0;i<n;i++){
+               for(int j=0;j<n;j++){
+                   int sum=nums3[i]+nums4[j];
+                   count+=map.getOrDefault(-sum,0);
+               }
+           }
+           return count;
+       }
+   }
+   ```
+
    
 
 ## 双指针
@@ -107,6 +166,79 @@
 
    ![image-20240126223144361](D:\Desktop\Leetcode\assets\image-20240126223144361.png)
 
+4. [18. 四数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/4sum/description/)
+
+   **题目简述：**给你一个由 `n` 个整数组成的数组 `nums` ，和一个目标值 `target` 。请你找出并返回满足下述全部条件且**不重复**的四元组 `[nums[a], nums[b], nums[c], nums[d]]` （若两个四元组元素一一对应，则认为两个四元组重复）：
+
+   - `0 <= a, b, c, d < n`
+   - `a`、`b`、`c` 和 `d` **互不相同**
+   - `nums[a] + nums[b] + nums[c] + nums[d] == target`
+
+   **解题思路：**
+
+   ![image-20240306212801824](D:\Desktop\Leetcode\assets\image-20240306212801824.png)
+
+   ![image-20240306212814735](D:\Desktop\Leetcode\assets\image-20240306212814735.png)
+
+   **解题代码：**
+
+   ```java
+   // 注意一些剪枝条件，有些测试用例卡的很死
+   // 例如：[1000000000,1000000000,1000000000,1000000000]     -294967296
+   class Solution {
+       public List<List<Integer>> fourSum(int[] nums, int target) {
+           List<List<Integer>> quadruplets = new ArrayList<List<Integer>>();
+           if (nums == null || nums.length < 4) {
+               return quadruplets;
+           }
+           Arrays.sort(nums);
+           int length = nums.length;
+           for (int i = 0; i < length - 3; i++) {
+               if (i > 0 && nums[i] == nums[i - 1]) {
+                   continue;
+               }
+               if ((long) nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
+                   break;
+               }
+               if ((long) nums[i] + nums[length - 3] + nums[length - 2] + nums[length - 1] < target) {
+                   continue;
+               }
+               for (int j = i + 1; j < length - 2; j++) {
+                   if (j > i + 1 && nums[j] == nums[j - 1]) {
+                       continue;
+                   }
+                   if ((long) nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
+                       break;
+                   }
+                   if ((long) nums[i] + nums[j] + nums[length - 2] + nums[length - 1] < target) {
+                       continue;
+                   }
+                   int left = j + 1, right = length - 1;
+                   while (left < right) {
+                       long sum = (long) nums[i] + nums[j] + nums[left] + nums[right];
+                       if (sum == target) {
+                           quadruplets.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                           while (left < right && nums[left] == nums[left + 1]) {
+                               left++;
+                           }
+                           left++;
+                           while (left < right && nums[right] == nums[right - 1]) {
+                               right--;
+                           }
+                           right--;
+                       } else if (sum < target) {
+                           left++;
+                       } else {
+                           right--;
+                       }
+                   }
+               }
+           }
+           return quadruplets;
+       }
+   }
+   ```
+
 
 
 ## 子串
@@ -152,7 +284,77 @@
 
 3. [76. 最小覆盖子串 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-window-substring/description/?envType=study-plan-v2&envId=top-100-liked)
 
+   **题目简述：**给你一个字符串 `s` 、一个字符串 `t` 。返回 `s` 中涵盖 `t` 所有字符的最小子串。如果 `s` 中不存在涵盖 `t` 所有字符的子串，则返回空字符串 `""` 。
 
+   **解题思路：**
+
+   ![image-20240305164220626](D:\Desktop\Leetcode\assets\image-20240305164220626.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public String minWindow(String s, String t) {
+           boolean[] exit = new boolean[52];
+           int[] count = new int[52];
+           for(int i=0;i<t.length();i++){
+               char c=t.charAt(i);
+               if(c>='a'&&c<='z'){
+                   exit[c-'a']=true;
+                   count[c-'a']++;
+               }else{
+                   exit[c-'A'+26]=true;
+                   count[c-'A'+26]++;
+               }
+           }
+           int left=0,right=0,num=0;
+           int[] temp=new int[52];
+           int min=Integer.MAX_VALUE;
+           int begin=-1;
+           while (right<s.length()){
+               char c=s.charAt(right);
+               if(c>='a'&&c<='z'&&exit[c-'a']){
+                   temp[c-'a']++;
+                   if(temp[c-'a']<=count[c-'a']){
+                       num++;
+                   }
+               }else if(c>='A'&&c<='Z'&&exit[c-'A'+26]){
+                   temp[c-'A'+26]++;
+                   if(temp[c-'A'+26]<=count[c-'A'+26]){
+                       num++;
+                   }
+               }
+               while (num==t.length()){
+                   if(right-left+1<min){
+                       min=right-left+1;
+                       begin=left;
+                   }
+                   char op =s.charAt(left);
+                   if(op>='a'&&op<='z'&&exit[op-'a']){
+                       temp[op-'a']--;
+                       if(temp[op-'a']<count[op-'a']){
+                           num--;
+                       }
+                   }else if(op>='A'&&op<='Z'&&exit[op-'A'+26]){
+                       temp[op-'A'+26]--;
+                       if(temp[op-'A'+26]<count[op-'A'+26]){
+                           num--;
+                       }
+                   }
+                   left++;
+               }
+               right++;
+           }
+           if(min<Integer.MAX_VALUE){
+               return s.substring(begin,begin+min);
+           }else {
+               return "";
+           }
+       }
+   }
+   ```
+
+   
 
 ## 数组
 
@@ -274,6 +476,127 @@
    
        public int getRandom() {
            return list.get(rand.nextInt(list.size()));
+       }
+   }
+   ```
+
+4. [134. 加油站 - 力扣（LeetCode）](https://leetcode.cn/problems/gas-station/description/?envType=study-plan-v2&envId=top-interview-150)
+
+   **题目简述：**在一条环路上有 `n` 个加油站，其中第 `i` 个加油站有汽油 `gas[i]` 升。
+
+   你有一辆油箱容量无限的的汽车，从第 `i` 个加油站开往第 `i+1` 个加油站需要消耗汽油 `cost[i]` 升。你从其中的一个加油站出发，开始时油箱为空。
+
+   给定两个整数数组 `gas` 和 `cost` ，如果你可以按顺序绕环路行驶一周，则返回出发时加油站的编号，否则返回 `-1` 。如果存在解，则 **保证** 它是 **唯一** 的。
+
+   **解题思路：**如果从起始加油站开始，无法走到下一个加油站，那么起始加油站到下一个加油站的所有加油站都不可能是起始加油站。因此，我们可以跳过这些加油站，将下一个加油站作为新的起始加油站，继续判断。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int canCompleteCircuit(int[] gas, int[] cost) {
+           int n = gas.length;
+           int totalTank = 0;
+           int currTank = 0;
+           int startingStation = 0;
+           
+           for (int i = 0; i < n; i++) {
+               totalTank += gas[i] - cost[i];
+               currTank += gas[i] - cost[i];
+               
+               // 如果当前油箱为空，则无法从当前加油站出发
+               // 将下一个加油站作为新的起始加油站，并重置油箱
+               if (currTank < 0) {
+                   startingStation = i + 1;
+                   currTank = 0;
+               }
+           }
+           
+           // 如果总油量小于总消耗量，则无法环绕一圈
+           if (totalTank < 0) {
+               return -1;
+           }
+           
+           return startingStation;
+       }
+   }
+   ```
+
+   
+
+
+
+## 滑动窗口
+
+1. [209. 长度最小的子数组 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-size-subarray-sum/description/?envType=study-plan-v2&envId=top-interview-150)
+
+   **题目简述：**给定一个含有 `n` 个正整数的数组和一个正整数 `target` **。**
+
+   找出该数组中满足其总和大于等于 `target` 的长度最小的 **连续子数组** `[numsl, numsl+1, ..., numsr-1, numsr]` ，并返回其长度**。**如果不存在符合条件的子数组，返回 `0` 。
+
+   **解题思路（前缀和 + 二分查找）：**
+
+   ![image-20240303204519994](D:\Desktop\Leetcode\assets\image-20240303204519994.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int minSubArrayLen(int s, int[] nums) {
+           int n = nums.length;
+           if (n == 0) {
+               return 0;
+           }
+           int ans = Integer.MAX_VALUE;
+           int[] sums = new int[n + 1]; 
+           // 为了方便计算，令 size = n + 1 
+           // sums[0] = 0 意味着前 0 个元素的前缀和为 0
+           // sums[1] = A[0] 前 1 个元素的前缀和为 A[0]
+           // 以此类推
+           for (int i = 1; i <= n; i++) {
+               sums[i] = sums[i - 1] + nums[i - 1];
+           }
+           for (int i = 1; i <= n; i++) {
+               int target = s + sums[i - 1];
+               int bound = Arrays.binarySearch(sums, target);
+               if (bound < 0) {
+                   bound = -bound - 1;
+               }
+               if (bound <= n) {
+                   ans = Math.min(ans, bound - (i - 1));
+               }
+           }
+           return ans == Integer.MAX_VALUE ? 0 : ans;
+       }
+   }
+   ```
+
+   **解题思路（滑动窗口）：**
+
+   ![image-20240303210425230](D:\Desktop\Leetcode\assets\image-20240303210425230.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int minSubArrayLen(int s, int[] nums) {
+           int n = nums.length;
+           if (n == 0) {
+               return 0;
+           }
+           int ans = Integer.MAX_VALUE;
+           int start = 0, end = 0;
+           int sum = 0;
+           while (end < n) {
+               sum += nums[end];
+               while (sum >= s) {
+                   ans = Math.min(ans, end - start + 1);
+                   sum -= nums[start];
+                   start++;
+               }
+               end++;
+           }
+           return ans == Integer.MAX_VALUE ? 0 : ans;
        }
    }
    ```

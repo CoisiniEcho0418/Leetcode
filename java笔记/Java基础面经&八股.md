@@ -27,3 +27,376 @@
 - Java 有自动内存管理垃圾回收机制(GC)，不需要程序员手动释放无用内存。
 - C ++同时支持方法重载和操作符重载，但是 Java 只支持方法重载（操作符重载增加了复杂性，这与 Java 最初的设计思想不符）。
 - ……
+
+
+
+### 讲一下Java面向对象的特点
+
+封装、继承、多态是Java面向对象编程的三大特点。
+
+- **封装（Encapsulation）**：封装是面向对象编程的基本特点之一，它将数据和方法封装在对象内部，隐藏对象的内部实现细节，只暴露必要的接口供外部访问。通过封装，可以实现信息的隐藏和保护，提高代码的安全性和可靠性。
+
+- **继承（Inheritance）**：继承是面向对象编程的重要特点，它允许一个类（子类）继承另一个类（父类）的属性和方法。子类可以重用父类的代码，并可以通过扩展和重写来增加新的功能或修改现有功能。继承提高了代码的复用性和可维护性，同时也体现了类与类之间的关系。
+
+- **多态（Polymorphism）**：多态是面向对象编程的核心概念之一，它允许不同对象对同一消息作出不同的响应。在Java中，多态性通过方法重载和方法重写来实现。方法重载是指在同一个类中可以定义多个同名方法，但参数列表不同；方法重写是指子类可以重写父类的方法，实现不同的行为。多态性提高了代码的灵活性和扩展性，使得程序更易于理解和维护。
+
+  一个具体的例子是，假设有一个动物类（Animal）和它的两个子类：狗类（Dog）和猫类（Cat）。它们都有一个名为“makeSound”的方法，但是每种动物发出的声音是不同的。
+
+  通过多态性，可以创建一个Animal类型的引用指向一个具体的Dog或Cat对象。当调用这个引用的“makeSound”方法时，根据实际指向的对象类型，会执行相应子类的方法，从而实现不同动物发出不同声音的效果。这样就体现了多态的特性，同一个方法调用可以产生不同的行为，提高了代码的灵活性和可扩展性。
+
+
+
+### 多态和重载有什么关系？
+
+重载是一种编译时多态，而多态是一种运行时多态。两者都是实现多态性的方式，但发生的时间点和机制不同。
+
+- 重载是指在同一个类中，方法名相同但参数列表不同的情况，通过参数个数、类型或顺序的不同来区分不同的方法。重载是静态绑定的概念，编译器在编译期间根据方法的参数列表来确定调用哪个方法。
+- 多态是指同一个方法名可以在不同的类中有不同的实现，不同的子类可以重写父类的方法，通过父类引用指向子类对象时，根据实际对象的类型来确定调用哪个方法。多态是动态绑定的概念，运行时根据对象的实际类型来确定调用哪个方法。
+
+
+
+### [接口和抽象类有什么共同点和区别？](https://javaguide.cn/java/basis/java-basic-questions-02.html#接口和抽象类有什么共同点和区别)
+
+**共同点**：
+
+- 都不能被实例化。
+- 都可以包含抽象方法。
+- 都可以有默认实现的方法（Java 8 可以用 `default` 关键字在接口中定义默认方法）。
+
+**区别**：
+
+- 接口主要用于对类的行为进行约束，你实现了某个接口就具有了对应的行为。抽象类主要用于代码复用，强调的是所属关系。
+- 一个类只能继承一个类，但是可以实现多个接口。
+- 接口中的成员变量只能是 `public static final` 类型的，不能被修改且必须有初始值，而抽象类的成员变量默认 default，可在子类中被重新定义，也可被重新赋值。
+
+
+
+### [深拷贝和浅拷贝区别了解吗？什么是引用拷贝？](https://javaguide.cn/java/basis/java-basic-questions-02.html#深拷贝和浅拷贝区别了解吗-什么是引用拷贝)
+
+![浅拷贝、深拷贝、引用拷贝示意图](https://oss.javaguide.cn/github/javaguide/java/basis/shallow&deep-copy.png)
+
+
+
+### [Object 类的常见方法有哪些？](https://javaguide.cn/java/basis/java-basic-questions-02.html#object-类的常见方法有哪些)
+
+Object 类是一个特殊的类，是所有类的父类。它主要提供了以下 11 个方法：
+
+```java
+/**
+ * native 方法，用于返回当前运行时对象的 Class 对象，使用了 final 关键字修饰，故不允许子类重写。
+ */
+public final native Class<?> getClass()
+/**
+ * native 方法，用于返回对象的哈希码，主要使用在哈希表中，比如 JDK 中的HashMap。
+ */
+public native int hashCode()
+/**
+ * 用于比较 2 个对象的内存地址是否相等，String 类对该方法进行了重写以用于比较字符串的值是否相等。
+ */
+public boolean equals(Object obj)
+/**
+ * native 方法，用于创建并返回当前对象的一份拷贝。
+ */
+protected native Object clone() throws CloneNotSupportedException
+/**
+ * 返回类的名字实例的哈希码的 16 进制的字符串。建议 Object 所有的子类都重写这个方法。
+ */
+public String toString()
+/**
+ * native 方法，并且不能重写。唤醒一个在此对象监视器上等待的线程(监视器相当于就是锁的概念)。如果有多个线程在等待只会任意唤醒一个。
+ */
+public final native void notify()
+/**
+ * native 方法，并且不能重写。跟 notify 一样，唯一的区别就是会唤醒在此对象监视器上等待的所有线程，而不是一个线程。
+ */
+public final native void notifyAll()
+/**
+ * native方法，并且不能重写。暂停线程的执行。注意：sleep 方法没有释放锁，而 wait 方法释放了锁 ，timeout 是等待时间。
+ */
+public final native void wait(long timeout) throws InterruptedException
+/**
+ * 多了 nanos 参数，这个参数表示额外时间（以纳秒为单位，范围是 0-999999）。 所以超时的时间还需要加上 nanos 纳秒。。
+ */
+public final void wait(long timeout, int nanos) throws InterruptedException
+/**
+ * 跟之前的2个wait方法一样，只不过该方法一直等待，没有超时时间这个概念
+ */
+public final void wait() throws InterruptedException
+/**
+ * 实例被垃圾回收器回收的时候触发的操作
+ */
+protected void finalize() throws Throwable { }
+
+```
+
+
+
+### `StringBuilder`类不能调用`equals()`方法来判断是否相等
+
+在Java中，`StringBuilder`类是可变的，它的`equals()`方法并没有被重写，因此它继承自`Object`类的`equals()`方法，该方法默认使用引用相等性来比较对象，即只有在两个`StringBuilder`对象引用的是同一个对象时才会返回`true`。
+
+如果你想要比较`StringBuilder`对象的内容是否相等，可以通过将`StringBuilder`对象转换为`String`对象，然后使用`String`的`equals()`方法来进行比较。或者你也可以使用`StringBuilder`的`toString()`方法先将其转换为`String`，再进行比较。
+
+```java
+StringBuilder sb1 = new StringBuilder("hello");
+StringBuilder sb2 = new StringBuilder("hello");
+
+// 使用StringBuilder的toString()方法将其转换为String，然后使用equals()方法比较
+if (sb1.toString().equals(sb2.toString())) {
+    System.out.println("sb1 and sb2 are equal");
+} else {
+    System.out.println("sb1 and sb2 are not equal");
+}
+
+// 或者也可以使用contentEquals()方法来比较，例如：
+if (sb1.toString().contentEquals(sb2)) {
+    System.out.println("sb1 and sb2 are equal");
+} else {
+    System.out.println("sb1 and sb2 are not equal");
+}
+```
+
+
+
+### `native`方法
+
+https://blog.csdn.net/weixin_43629719/article/details/88823090
+
+
+
+### [为什么要有 hashCode？](https://javaguide.cn/java/basis/java-basic-questions-02.html#为什么要有-hashcode)
+
+我们以“`HashSet` 如何检查重复”为例子来说明为什么要有 `hashCode`？
+
+下面这段内容摘自我的 Java 启蒙书《Head First Java》:
+
+> 当你把对象加入 `HashSet` 时，`HashSet` 会先计算对象的 `hashCode` 值来判断对象加入的位置，同时也会与其他已经加入的对象的 `hashCode` 值作比较，如果没有相符的 `hashCode`，`HashSet` 会假设对象没有重复出现。但是如果发现有相同 `hashCode` 值的对象，这时会调用 `equals()` 方法来检查 `hashCode` 相等的对象是否真的相同。如果两者相同，`HashSet` 就不会让其加入操作成功。如果不同的话，就会重新散列到其他位置。这样我们就大大减少了 `equals` 的次数，相应就大大提高了执行速度。
+
+其实， `hashCode()` 和 `equals()`都是用于比较两个对象是否相等。
+
+**那为什么 JDK 还要同时提供这两个方法呢？**
+
+这是因为在一些容器（比如 `HashMap`、`HashSet`）中，有了 `hashCode()` 之后，判断元素是否在对应容器中的效率会更高（参考添加元素进`HashSet`的过程）！
+
+我们在前面也提到了添加元素进`HashSet`的过程，如果 `HashSet` 在对比的时候，同样的 `hashCode` 有多个对象，它会继续使用 `equals()` 来判断是否真的相同。也就是说 `hashCode` 帮助我们大大缩小了查找成本。
+
+**那为什么不只提供 `hashCode()` 方法呢？**
+
+这是因为两个对象的`hashCode` 值相等并不代表两个对象就相等。
+
+**那为什么两个对象有相同的 `hashCode` 值，它们也不一定是相等的？**
+
+因为 `hashCode()` 所使用的哈希算法也许刚好会让多个对象传回相同的哈希值。越糟糕的哈希算法越容易碰撞，但这也与数据值域分布的特性有关（所谓哈希碰撞也就是指的是不同的对象得到相同的 `hashCode` )。
+
+总结下来就是：
+
+- 如果两个对象的`hashCode` 值相等，那这两个对象不一定相等（哈希碰撞）。
+- 如果两个对象的`hashCode` 值相等并且`equals()`方法也返回 `true`，我们才认为这两个对象相等。
+- 如果两个对象的`hashCode` 值不相等，我们就可以直接认为这两个对象不相等。
+
+
+
+### [为什么重写 equals() 时必须重写 hashCode() 方法？](https://javaguide.cn/java/basis/java-basic-questions-02.html#为什么重写-equals-时必须重写-hashcode-方法)
+
+因为两个相等的对象的 `hashCode` 值必须是相等。也就是说如果 `equals` 方法判断两个对象是相等的，那这两个对象的 `hashCode` 值也要相等。
+
+如果重写 `equals()` 时没有重写 `hashCode()` 方法的话就可能会导致 `equals` 方法判断是相等的两个对象，`hashCode` 值却不相等。
+
+**思考**：重写 `equals()` 时没有重写 `hashCode()` 方法的话，使用 `HashMap` 可能会出现什么问题。
+
+**总结**：
+
+- `equals` 方法判断两个对象是相等的，那这两个对象的 `hashCode` 值也要相等。
+- 两个对象有相同的 `hashCode` 值，他们也不一定是相等的（哈希碰撞）。
+
+
+
+### String，StringBuilder， StringBuffer区别？单线程大量操作字符串用哪个？
+
+String、StringBuilder和StringBuffer都是Java中用于操作字符串的类。
+
+String是不可变的字符序列，每次对String进行修改时都会创建一个新的String对象，因此在大量操作字符串时，使用String会频繁地创建对象，导致性能较低。
+
+StringBuilder和StringBuffer都是可变的字符序列，可以对其进行多次修改而不创建新的对象。两者的区别在于线程安全性，StringBuffer是线程安全的，而StringBuilder是非线程安全的。因为StringBuffer的所有共有方法都是同步的，所以在多线程环境下使用StringBuffer可以保证线程安全，但是会降低性能。而StringBuilder没有同步方法，所以在单线程环境下使用StringBuilder性能更高。
+
+因此，在单线程环境下进行大量的字符串操作时，应该使用StringBuilder，可以获得更好的性能。在多线程环境下，使用StringBuffer可以保证线程安全，但是会牺牲一定的性能。
+
+综上所述，单线程大量操作字符串时应该使用StringBuilder，而在多线程环境下应该使用StringBuffer。
+
+### [String、StringBuffer、StringBuilder 的区别？](https://javaguide.cn/java/basis/java-basic-questions-02.html#string、stringbuffer、stringbuilder-的区别)
+
+> **对于三者使用的总结：**
+>
+> 1. 操作少量的数据: 适用 `String`
+> 2. 单线程操作字符串缓冲区下操作大量数据: 适用 `StringBuilder`
+> 3. 多线程操作字符串缓冲区下操作大量数据: 适用 `StringBuffer`
+
+
+
+### [String 为什么是不可变的?](https://javaguide.cn/java/basis/java-basic-questions-02.html#string-为什么是不可变的)
+
+
+
+### [字符串拼接用“+” 还是 StringBuilder?](https://javaguide.cn/java/basis/java-basic-questions-02.html#字符串拼接用-还是-stringbuilder)
+
+字符串对象通过“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象 。
+
+不过，在循环内使用“+”进行字符串的拼接的话，存在比较明显的缺陷：**编译器不会创建单个 `StringBuilder` 以复用，会导致创建过多的 `StringBuilder` 对象**。
+
+```java
+String[] arr = {"he", "llo", "world"};
+String s = "";
+for (int i = 0; i < arr.length; i++) {
+    s += arr[i];
+}
+System.out.println(s);
+```
+
+`StringBuilder` 对象是在循环内部被创建的，这意味着每循环一次就会创建一个 `StringBuilder` 对象。
+
+如果直接使用 `StringBuilder` 对象进行字符串拼接的话，就不会存在这个问题了。
+
+```java
+String[] arr = {"he", "llo", "world"};
+StringBuilder s = new StringBuilder();
+for (String value : arr) {
+    s.append(value);
+}
+System.out.println(s);
+```
+
+
+
+### [String s1 = new String("abc");这句话创建了几个字符串对象？](https://javaguide.cn/java/basis/java-basic-questions-02.html#string-s1-new-string-abc-这句话创建了几个字符串对象)
+
+会创建 1 或 2 个字符串对象。
+
+1、如果字符串常量池中不存在字符串对象“abc”的引用，那么它会在堆上创建两个字符串对象，其中一个字符串对象的引用会被保存在字符串常量池中。
+
+示例代码（JDK 1.8）：
+
+```java
+String s1 = new String("abc");
+```
+
+对应的字节码：
+
+![img](https://oss.javaguide.cn/github/javaguide/open-source-project/image-20220413175809959.png)
+
+`ldc` 命令用于判断字符串常量池中是否保存了对应的字符串对象的引用，如果保存了的话直接返回，如果没有保存的话，会在堆中创建对应的字符串对象并将该字符串对象的引用保存到字符串常量池中。
+
+2、如果字符串常量池中已存在字符串对象“abc”的引用，则只会在堆中创建 1 个字符串对象“abc”。
+
+示例代码（JDK 1.8）：
+
+```java
+// 字符串常量池中已存在字符串对象“abc”的引用
+String s1 = "abc";
+// 下面这段代码只会在堆中创建 1 个字符串对象“abc”
+String s2 = new String("abc");
+```
+
+对应的字节码：
+
+![img](https://oss.javaguide.cn/github/javaguide/open-source-project/image-20220413180021072.png)
+
+这里就不对上面的字节码进行详细注释了，7 这个位置的 `ldc` 命令不会在堆中创建新的字符串对象“abc”，这是因为 0 这个位置已经执行了一次 `ldc` 命令，已经在堆中创建过一次字符串对象“abc”了。7 这个位置执行 `ldc` 命令会直接返回字符串常量池中字符串对象“abc”对应的引用。
+
+
+
+### [String#intern 方法有什么作用?](https://javaguide.cn/java/basis/java-basic-questions-02.html#string-intern-方法有什么作用)
+
+`String.intern()` 是一个 native（本地）方法，其作用是将指定的字符串对象的引用保存在字符串常量池中，可以简单分为两种情况：
+
+- 如果字符串常量池中保存了对应的字符串对象的引用，就直接返回该引用。
+- 如果字符串常量池中没有保存了对应的字符串对象的引用，那就在常量池中创建一个指向该字符串对象的引用并返回。
+
+示例代码（JDK 1.8） :
+
+```java
+// 在堆中创建字符串对象”Java“
+// 将字符串对象”Java“的引用保存在字符串常量池中
+String s1 = "Java";
+// 直接返回字符串常量池中字符串对象”Java“对应的引用
+String s2 = s1.intern();
+// 会在堆中在单独创建一个字符串对象
+String s3 = new String("Java");
+// 直接返回字符串常量池中字符串对象”Java“对应的引用
+String s4 = s3.intern();
+// s1 和 s2 指向的是堆中的同一个对象
+System.out.println(s1 == s2); // true
+// s3 和 s4 指向的是堆中不同的对象
+System.out.println(s3 == s4); // false
+// s1 和 s4 指向的是堆中的同一个对象
+System.out.println(s1 == s4); //true
+```
+
+
+
+### [String 类型的变量和常量做“+”运算时发生了什么？](https://javaguide.cn/java/basis/java-basic-questions-02.html#string-类型的变量和常量做-运算时发生了什么)
+
+先来看字符串不加 `final` 关键字拼接的情况（JDK1.8）：
+
+```java
+String str1 = "str";
+String str2 = "ing";
+String str3 = "str" + "ing";
+String str4 = str1 + str2;
+String str5 = "string";
+System.out.println(str3 == str4);//false
+System.out.println(str3 == str5);//true
+System.out.println(str4 == str5);//false
+```
+
+**对于编译期可以确定值的字符串，也就是常量字符串 ，jvm 会将其存入字符串常量池。并且，字符串常量拼接得到的字符串常量在编译阶段就已经被存放字符串常量池，这个得益于编译器的优化。**
+
+常量折叠会把常量表达式的值求出来作为常量嵌在最终生成的代码中，这是 Javac 编译器会对源代码做的极少量优化措施之一(代码优化几乎都在即时编译器中进行)。
+
+对于 `String str3 = "str" + "ing";` 编译器会给你优化成 `String str3 = "string";` 。
+
+并不是所有的常量都会进行折叠，只有编译器在程序编译期就可以确定值的常量才可以：
+
+- 基本数据类型( `byte`、`boolean`、`short`、`char`、`int`、`float`、`long`、`double`)以及字符串常量。
+- `final` 修饰的基本数据类型和字符串变量
+- 字符串通过 “+”拼接得到的字符串、基本数据类型之间算数运算（加减乘除）、基本数据类型的位运算（<<、>>、>>> ）
+
+**引用的值在程序编译期是无法确定的，编译器无法对其进行优化。**
+
+对象引用和“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象 。
+
+```java
+String str4 = new StringBuilder().append(str1).append(str2).toString();
+```
+
+我们在平时写代码的时候，尽量避免多个字符串对象拼接，因为这样会重新创建对象。如果需要改变字符串的话，可以使用 `StringBuilder` 或者 `StringBuffer`。
+
+不过，字符串使用 `final` 关键字声明之后，可以让编译器当做常量来处理。
+
+示例代码：
+
+```java
+final String str1 = "str";
+final String str2 = "ing";
+// 下面两个表达式其实是等价的
+String c = "str" + "ing";// 常量池中的对象
+String d = str1 + str2; // 常量池中的对象
+System.out.println(c == d);// true
+```
+
+被 `final` 关键字修饰之后的 `String` 会被编译器当做常量来处理，编译器在程序编译期就可以确定它的值，其效果就相当于访问常量。
+
+如果 ，编译器在运行时才能知道其确切值的话，就无法对其优化。
+
+示例代码（`str2` 在运行时才能确定其值）：
+
+```java
+final String str1 = "str";
+final String str2 = getStr();
+String c = "str" + "ing";// 常量池中的对象
+String d = str1 + str2; // 在堆上创建的新的对象
+System.out.println(c == d);// false
+public static String getStr() {
+      return "ing";
+}
+```
+
