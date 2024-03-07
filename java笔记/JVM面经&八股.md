@@ -14,6 +14,18 @@
 
 ![Java 运行时数据区域（JDK1.8 ）](https://oss.javaguide.cn/github/javaguide/java/jvm/java-runtime-data-areas-jdk1.8.png)
 
+### jvm内存分布说一下
+
+![图片](https://mmbiz.qpic.cn/sz_mmbiz_jpg/J0g14CUwaZee5LWu0KxeqiaibCYoHbhmhtTgSdYXUooyyibMdqlpibWGFK0ORIL12WCfekUdzbHNOk9XJUtXxCRrMA/640?wx_fmt=jpeg&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1)图片
+
+JVM的内存结构主要分为以下几个部分：
+
+- 程序计数器（Program Counter Register）：每个线程都有一个程序计数器。当线程执行 Java 方法时，程序计数器保存当前执行指令的地址，以便在 JVM 调用其他方法或恢复线程执行时重新回到正确的位置。
+- Java 虚拟机栈（Java Virtual Machine Stacks）：每个线程都有一个虚拟机栈。虚拟机栈保存着方法执行期间的局部变量、操作数栈、方法出口等信息。线程每调用一个 Java 方法时，会创建一个栈帧（Stack Frame），栈帧包含着该方法的局部变量、操作数栈、方法返回地址等信息。栈帧在方法执行结束后会被弹出。
+- 本地方法栈（Native Method Stack）：与 Java 虚拟机栈类似，但是为本地方法服务。
+- Java 堆（Java Heap）：Java 堆是 Java 虚拟机中最大的一块内存区域，用于存储各种类型的对象实例，也是垃圾收集器的主要工作区域，Java 堆根据对象存活时间的不同，Java 堆还被分为年轻代、老年代两个区域，年轻代还被进一步划分为 Eden 区、From Survivor 0、To Survivor 1 区。
+- 方法区（Method Area）：方法区也是所有线程共享的部分，它用于存储类的加载信息、静态变量、常量池、方法字节码等数据。在 Java 8 及以前的版本中，方法区被实现为永久代（Permanent Generation），在 Java 8 中被改为元空间（Metaspace）。
+
 
 
 ### [对象的创建](https://javaguide.cn/java/jvm/memory-area.html#对象的创建)
@@ -33,6 +45,14 @@
 > - 常见的垃圾回收器有哪些？
 > - 介绍一下 CMS,G1 收集器。
 > - Minor Gc 和 Full GC 有什么不同呢？
+
+### 有垃圾回收的是哪些地方？
+
+垃圾回收主要是针对堆内存中的对象进行的，包括以下几个方面：
+
+- **堆内存**：垃圾回收主要针对堆内存中不再被引用的对象进行回收，包括新生代和老年代中的对象。
+- **永久代/元空间**：虚拟机中存放类的元数据信息的区域，也会进行垃圾回收，即对不再使用的类信息进行清理。
+- **字符串常量池**：存放字符串常量的区域，也会进行垃圾回收，对不再被引用的字符串进行清理。
 
 
 
