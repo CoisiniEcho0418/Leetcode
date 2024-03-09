@@ -262,7 +262,7 @@
                if(map.containsKey(pre-k)){
                    total+=map.get(pre-k);
                }
-               map.put(pre, map.getOrDefault(pre-k,0)+1);
+               map.put(pre, map.getOrDefault(pre,0)+1);
            }
    
            return  total;
@@ -2277,7 +2277,29 @@
    - 如果堆的元素个数小于 k，就可以直接插入堆中。
    - 如果堆的元素个数等于 k，则检查堆顶与当前出现次数的大小。如果堆顶更大，说明至少有 k 个数字的出现次数比当前值大，故舍弃当前值；否则，就弹出堆顶，并将当前值插入堆中。
 
-   **解题代码：**
+   **解题代码（个人简化版）：**
+
+   ```java
+   // 哈希表 + 优先队列
+   class Solution {
+       public int[] topKFrequent(int[] nums, int k) {
+           int[] ans=new int[k];
+           Map<Integer,Integer> map =new HashMap<>();
+           for(int num:nums){
+               map.put(num,map.getOrDefault(num,0)+1);
+           }
+           // 构造一个降序排序的优先队列
+           PriorityQueue<Map.Entry<Integer,Integer>> queue=new PriorityQueue<>((o1, o2) -> o2.getValue()-o1.getValue());
+           queue.addAll(map.entrySet());
+           for(int i=0;i<k;i++){
+               ans[i]=queue.poll().getKey();
+           }
+           return ans;
+       }
+   }
+   ```
+
+   **解题代码（官方版）：**
 
    ```java
    // 官方的代码，把哈希表转换成一个大小为2的数组，第一个元素代表数组的值，第二个元素代表了该值出现的次数，然后再利用
