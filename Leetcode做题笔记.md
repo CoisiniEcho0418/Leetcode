@@ -1011,9 +1011,9 @@
                return 0;
            }
            //计算左边分支最大值，左边分支如果为负数还不如不选择
-           int leftMax = Math.max(0, dfs(root.left));
+           int leftMax = Math.max(0, maxGain(root.left));
            //计算右边分支最大值，右边分支如果为负数还不如不选择
-           int rightMax = Math.max(0, dfs(root.right));
+           int rightMax = Math.max(0, maxGain(root.right));
            //left->root->right 作为路径与已经计算过历史最大值做比较
            max = Math.max(max, root.val + leftMax + rightMax);
            // 返回经过root的单边最大分支给当前root的父节点计算使用
@@ -1126,7 +1126,7 @@
    }
    ```
    
-   **解法二（递归官方版）：**采用深度优先搜索来递归，`dfs(cur,nums)`中的`cur`表示当前位置，通过根据当前位置对应的整数是否出现在子集中，可以分为两条支路，从而进行`dfs`递归，知道`cur==nums.length`，此时表示数组中的所有整数是否出现都已经被确认，然后将数组记录下来。
+   **解法二（递归官方版）：**采用深度优先搜索来递归，`dfs(cur,nums)`中的`cur`表示当前位置，通过根据当前位置对应的整数是否出现在子集中，可以分为两条支路，从而进行`dfs`递归，直到`cur==nums.length`，此时表示数组中的所有整数是否出现都已经被确认，然后将数组记录下来。
    
    ```java
    class Solution {
@@ -2096,7 +2096,7 @@
 
 1. [215. 数组中的第K个最大元素 - 力扣（LeetCode）](https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-100-liked)
 
-   **题目简述：**给定整数数组 `nums` 和整数 `k`，请返回数组中第 `**k**` 个最大的元素。请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+   **题目简述：**给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
 
    **解题思路一（基于快速排序的选择方法）：**
 

@@ -19,6 +19,71 @@
 
 
 
+### 聊聊HashMap的底层结构
+
+在 **JDK 1.7** 版本之前， HashMap 数据结构是**数组和链表**，HashMap通过哈希算法将元素的键（Key）映射到数组中的槽位（Bucket）。如果多个键映射到同一个槽位，它们会以链表的形式存储在同一个槽位上，因为链表的查询时间是O(n)，所以冲突很严重，一个索引上的链表非常长，效率就很低了。
+
+所以在 **JDK 1.8** 版本的时候做了优化，当一个链表的长度超过8的时候就转换数据结构，不再使用链表存储，而是使用**红黑树**，查找时使用红黑树，时间复杂度O（log n），可以提高查询性能，但是在数量较少时，即数量小于6时，会将红黑树转换回链表。
+
+![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/J0g14CUwaZfW5jtMU7dzOUhL6avJSwsuZDX6iah5PhSzAx8UlmJNCQVdpnNnRqiauOojpKxcv8DATdmWJAq1NAXw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+### 为什么要引入红黑树，而不用其他树？
+
+- 为什么不使用二叉排序树？问题主要出现在二叉排序树在添加元素的时候极端情况下会出现线性结构。比如由于二叉排序树左子树所有节点的值均小于根节点的特点，如果我们添加的元素都比根节点小，会导致左子树线性增长，这样就失去了用树型结构替换链表的初衷，导致查询时间增长。所以这是不用二叉查找树的原因。
+- 为什么不使用平衡二叉树呢？红黑树不追求"完全平衡"，而而AVL是严格平衡树，因此在增加或者删除节点的时候，根据不同情况，旋转的次数比红黑树要多。红黑树读取略逊于AVL，维护强于AVL，空间开销与AVL类似，内容极多时略优于AVL，维护优于AVL。
+
+基本上主要的几种平衡树看来，**红黑树有着良好的稳定性和完整的功能，性能表现也很不错，综合实力强**，在诸如STL的场景中需要稳定表现。
+
+
+
+### HashMap会出现红黑树一直增高变成无限高的情况吗？
+
+不能无限增长。当集合中的节点数超过了阈值，HashMap会进行扩容，这时原始的红黑树节点会被打散，可能会退化成链表结构。
+
+### HashMap读和写的时间复杂度是多少？
+
+HashMap的读取（查找）和写入（插入、更新、删除）操作的时间复杂度均为O(1)，即常数时间复杂度。
+
+这是因为HashMap内部使用哈希表来存储键值对，通过计算键的哈希值可以直接定位到对应的存储位置，从而实现快速的读取和写入操作。
+
+在理想情况下，HashMap可以在常数时间内完成查找和插入操作，具有高效的性能表现。
+
+### HashMap是线程安全的吗？怎么解决？
+
+不是线程安全的。
+
+- JDK 1.7 HashMap 采用数组 + 链表的数据结构，多线程背景下，在数组扩容的时候，存在 Entry 链死循环和数据丢失问题。
+- JDK 1.8 HashMap 采用数组 + 链表 + 红黑二叉树的数据结构，优化了 1.7 中数组扩容的方案，解决了 Entry 链死循环和数据丢失问题。但是多线程背景下，put 方法存在数据覆盖的问题。
+
+解决的方式：
+
+- **使用ConcurrentHashMap**：ConcurrentHashMap是Java提供的线程安全的哈希表实现，它通过分段锁（Segment）和CAS操作来保证线程安全性，适用于高并发环境。
+- **使用Collections.synchronizedMap**：可以通过Collections工具类中的synchronizedMap方法来创建一个线程安全的HashMap，该方法会返回一个同步的Map对象，但性能可能不如ConcurrentHashMap。
+
+### 解决线程安全问题还有哪些办法？
+
+- **使用同步关键字synchronized**：可以通过在方法或代码块上使用synchronized关键字来实现线程安全，确保同一时刻只有一个线程可以访问共享资源。
+- **使用volatile关键字**：可以使用volatile关键字修饰变量，保证变量的可见性，即一个线程修改了变量的值，其他线程能立即看到最新值，从而避免数据不一致的问题。
+- **使用线程安全的工具类**：Java中提供了诸如AtomicInteger、AtomicLong、CountDownLatch等线程安全的工具类，可以帮助解决并发场景下的线程安全性问题。
+- **使用并发容器**：Java中提供了多种线程安全的并发容器，如ConcurrentLinkedQueue、CopyOnWriteArrayList等，可以替代传统的非线程安全容器来解决多线程并发访问问题。
+
+
+
+### **HashSet 和 ArrayList 的区别**
+
+- ArrayList 是基于动态数组实现的，HashSet 是基于 HashMap 实现的。
+- ArrayList 允许重复元素和 null 值，可以有多个相同的元素；HashSet 保证每个元素唯一，不允许重复元素，基于元素的 hashCode 和 equals 方法来确定元素的唯一性。
+- ArrayList 保持元素的插入顺序，可以通过索引访问元素；HashSet 不保证元素的顺序，元素的存储顺序依赖于哈希算法，并且可能随着元素的添加或删除而改变。
+
+
+
+### **ArrayList 和 Vector 的比较**
+
+- 线程安全性：Vector是线程安全的，ArrayList不是线程安全的。
+- 扩容策略：ArrayList在底层数组不够用时在原来的基础上扩展0.5倍，Vector是扩展1倍。
+
+
+
 ### [比较 HashSet、LinkedHashSet 和 TreeSet 三者的异同](https://javaguide.cn/java/collection/java-collection-questions-01.html#比较-hashset、linkedhashset-和-treeset-三者的异同)
 
 > `HashSet`、`LinkedHashSet` 和 `TreeSet` 都是 `Set` 接口的实现类，都能保证元素唯一，并且都不是线程安全的。
@@ -66,6 +131,27 @@
 
 
 
+### HashMap是线程安全的吗？怎么解决？
+
+不是线程安全的。
+
+- JDK 1.7 HashMap 采用数组 + 链表的数据结构，多线程背景下，在数组扩容的时候，存在 Entry 链死循环和数据丢失问题。
+- JDK 1.8 HashMap 采用数组 + 链表 + 红黑二叉树的数据结构，优化了 1.7 中数组扩容的方案，解决了 Entry 链死循环和数据丢失问题。但是多线程背景下，put 方法存在数据覆盖的问题。
+
+解决的方式：
+
+- **使用ConcurrentHashMap**：ConcurrentHashMap是Java提供的线程安全的哈希表实现，它通过分段锁（Segment）和CAS操作来保证线程安全性，适用于高并发环境。
+- **使用Collections.synchronizedMap**：可以通过Collections工具类中的synchronizedMap方法来创建一个线程安全的HashMap，该方法会返回一个同步的Map对象，但性能可能不如ConcurrentHashMap。
+
+### 解决线程安全问题还有哪些办法？
+
+- **使用同步关键字synchronized**：可以通过在方法或代码块上使用synchronized关键字来实现线程安全，确保同一时刻只有一个线程可以访问共享资源。
+- **使用volatile关键字**：可以使用volatile关键字修饰变量，保证变量的可见性，即一个线程修改了变量的值，其他线程能立即看到最新值，从而避免数据不一致的问题。
+- **使用线程安全的工具类**：Java中提供了诸如AtomicInteger、AtomicLong、CountDownLatch等线程安全的工具类，可以帮助解决并发场景下的线程安全性问题。
+- **使用并发容器**：Java中提供了多种线程安全的并发容器，如ConcurrentLinkedQueue、CopyOnWriteArrayList等，可以替代传统的非线程安全容器来解决多线程并发访问问题。
+
+
+
 
 
 ### Map
@@ -106,6 +192,21 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
 
 
 #### [HashMap 的底层实现](https://javaguide.cn/java/collection/java-collection-questions-02.html#hashmap-的底层实现)
+
+在 **JDK 1.7** 版本之前， HashMap 数据结构是**数组和链表**，HashMap通过哈希算法将元素的键（Key）映射到数组中的槽位（Bucket）。如果多个键映射到同一个槽位，它们会以链表的形式存储在同一个槽位上，因为链表的查询时间是O(n)，所以冲突很严重，一个索引上的链表非常长，效率就很低了。
+
+所以在 **JDK 1.8** 版本的时候做了优化，当一个链表的长度超过8的时候就转换数据结构，不再使用链表存储，而是使用**红黑树**，查找时使用红黑树，时间复杂度O（log n），可以提高查询性能，但是在数量较少时，即数量小于6时，会将红黑树转换回链表。
+
+![图片](https://mmbiz.qpic.cn/sz_mmbiz_png/J0g14CUwaZfW5jtMU7dzOUhL6avJSwsuZDX6iah5PhSzAx8UlmJNCQVdpnNnRqiauOojpKxcv8DATdmWJAq1NAXw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+#### 为什么要引入红黑树，而不用其他树？
+
+- 为什么不使用二叉排序树？问题主要出现在二叉排序树在添加元素的时候极端情况下会出现线性结构。比如由于二叉排序树左子树所有节点的值均小于根节点的特点，如果我们添加的元素都比根节点小，会导致左子树线性增长，这样就失去了用树型结构替换链表的初衷，导致查询时间增长。所以这是不用二叉查找树的原因。
+- 为什么不使用平衡二叉树呢？红黑树不追求"完全平衡"，而而AVL是严格平衡树，因此在增加或者删除节点的时候，根据不同情况，旋转的次数比红黑树要多。红黑树读取略逊于AVL，维护强于AVL，空间开销与AVL类似，内容极多时略优于AVL，维护优于AVL。
+
+基本上主要的几种平衡树看来，**红黑树有着良好的稳定性和完整的功能，性能表现也很不错，综合实力强**，在诸如STL的场景中需要稳定表现。
+
+
 
 
 
@@ -200,6 +301,25 @@ HashMap的`put()`方法用于向HashMap中添加键值对。当调用HashMap的`
 需要注意的是，**HashMap中的键和值都可以为null**。
 
 此外，HashMap是非线程安全的，如果在多线程环境下使用，需要采取额外的同步措施或使用线程安全的ConcurrentHashMap。
+
+
+
+#### **hashcode 和 equals 方法只重写一个行不行，只重写 equals 没重写 hashcode，map put 的时候会发生什么**
+
+##### 为什么重写 quals 时必须重写 hashCode ⽅法？
+
+因为两个相等的对象的 `hashCode` 值必须是相等。也就是说如果 `equals` 方法判断两个对象是相等的，那这两个对象的 `hashCode` 值也要相等。
+
+如果重写 `equals()` 时没有重写 `hashCode()` 方法的话就可能会导致 `equals` 方法判断是相等的两个对象，`hashCode` 值却不相等。
+
+**总结**：
+
+- `equals` 方法判断两个对象是相等的，那这两个对象的 `hashCode` 值也要相等。
+- 两个对象有相同的 `hashCode` 值，他们也不一定是相等的（哈希碰撞）。
+
+##### 只重写 equals 没重写 hashcode，map put 的时候会发生什么?
+
+如果只重写 equals 方法，没有重写 hashcode 方法，那么会导致 equals 相等的两个对象，hashcode 不相等，这样的话，这两个对象会被放到不同的桶中，这样就会导致 get 的时候，找不到对应的值。
 
 
 

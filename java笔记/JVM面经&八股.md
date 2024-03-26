@@ -16,7 +16,7 @@
 
 ### jvm内存分布说一下
 
-![图片](https://mmbiz.qpic.cn/sz_mmbiz_jpg/J0g14CUwaZee5LWu0KxeqiaibCYoHbhmhtTgSdYXUooyyibMdqlpibWGFK0ORIL12WCfekUdzbHNOk9XJUtXxCRrMA/640?wx_fmt=jpeg&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1)图片
+![图片](https://mmbiz.qpic.cn/sz_mmbiz_jpg/J0g14CUwaZee5LWu0KxeqiaibCYoHbhmhtTgSdYXUooyyibMdqlpibWGFK0ORIL12WCfekUdzbHNOk9XJUtXxCRrMA/640?wx_fmt=jpeg&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1)
 
 JVM的内存结构主要分为以下几个部分：
 
@@ -46,6 +46,10 @@ JVM的内存结构主要分为以下几个部分：
 > - 介绍一下 CMS,G1 收集器。
 > - Minor Gc 和 Full GC 有什么不同呢？
 
+![图片](https://mmbiz.qpic.cn/mmbiz_png/z40lCFUAHpkHxnyCaNz1ib6eAURPJVRIjNOgtKMgwjAHvjQYxflom6MAV4yg50Wcwg5tDnRianyg0KQicbLvYcwdQ/640?wx_fmt=png&from=appmsg&wxfrom=5&wx_lazy=1&wx_co=1)
+
+
+
 ### 有垃圾回收的是哪些地方？
 
 垃圾回收主要是针对堆内存中的对象进行的，包括以下几个方面：
@@ -74,6 +78,55 @@ JVM的内存结构主要分为以下几个部分：
 
 - [CMS 收集器](https://javaguide.cn/java/jvm/jvm-garbage-collection.html#cms-收集器)
 - [G1 收集器](https://javaguide.cn/java/jvm/jvm-garbage-collection.html#g1-收集器)
+
+### [CMS 收集器](#cms-收集器)
+
+**CMS（Concurrent Mark Sweep）收集器是一种以获取最短回收停顿时间为目标的收集器。它非常符合在注重用户体验的应用上使用。**
+
+**CMS（Concurrent Mark Sweep）收集器是 HotSpot 虚拟机第一款真正意义上的并发收集器，它第一次实现了让垃圾收集线程与用户线程（基本上）同时工作。**
+
+从名字中的**Mark Sweep**这两个词可以看出，CMS 收集器是一种 **“标记-清除”算法**实现的，它的运作过程相比于前面几种垃圾收集器来说更加复杂一些。整个过程分为四个步骤：
+
+- **初始标记：** 暂停所有的其他线程，并记录下直接与 root 相连的对象，速度很快 ；
+- **并发标记：** 同时开启 GC 和用户线程，用一个闭包结构去记录可达对象。但在这个阶段结束，这个闭包结构并不能保证包含当前所有的可达对象。因为用户线程可能会不断的更新引用域，所以 GC 线程无法保证可达性分析的实时性。所以这个算法里会跟踪记录这些发生引用更新的地方。
+- **重新标记：** 重新标记阶段就是为了修正并发标记期间因为用户程序继续运行而导致标记产生变动的那一部分对象的标记记录，这个阶段的停顿时间一般会比初始标记阶段的时间稍长，远远比并发标记阶段时间短
+- **并发清除：** 开启用户线程，同时 GC 线程开始对未标记的区域做清扫。
+
+![CMS 收集器](https://oss.javaguide.cn/github/javaguide/java/jvm/cms-garbage-collector.png)
+
+从它的名字就可以看出它是一款优秀的垃圾收集器，主要优点：**并发收集、低停顿**。但是它有下面三个明显的缺点：
+
+- **对 CPU 资源敏感；**
+- **无法处理浮动垃圾；**
+- **它使用的回收算法-“标记-清除”算法会导致收集结束时会有大量空间碎片产生。**
+
+**从 JDK9 开始，CMS 收集器已被弃用。**
+
+
+
+### [G1 收集器](#g1-收集器)
+
+**G1 (Garbage-First) 是一款面向服务器的垃圾收集器,主要针对配备多颗处理器及大容量内存的机器. 以极高概率满足 GC 停顿时间要求的同时,还具备高吞吐量性能特征.**
+
+被视为 JDK1.7 中 HotSpot 虚拟机的一个重要进化特征。它具备以下特点：
+
+- **并行与并发**：G1 能充分利用 CPU、多核环境下的硬件优势，使用多个 CPU（CPU 或者 CPU 核心）来缩短 Stop-The-World 停顿时间。部分其他收集器原本需要停顿 Java 线程执行的 GC 动作，G1 收集器仍然可以通过并发的方式让 java 程序继续执行。
+- **分代收集**：虽然 G1 可以不需要其他收集器配合就能独立管理整个 GC 堆，但是还是保留了分代的概念。
+- **空间整合**：与 CMS 的“标记-清除”算法不同，G1 从整体来看是基于“标记-整理”算法实现的收集器；从局部上来看是基于“标记-复制”算法实现的。
+- **可预测的停顿**：这是 G1 相对于 CMS 的另一个大优势，降低停顿时间是 G1 和 CMS 共同的关注点，但 G1 除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为 M 毫秒的时间片段内，消耗在垃圾收集上的时间不得超过 N 毫秒。
+
+G1 收集器的运作大致分为以下几个步骤：
+
+- **初始标记**
+- **并发标记**
+- **最终标记**
+- **筛选回收**
+
+![G1 收集器](https://oss.javaguide.cn/github/javaguide/java/jvm/g1-garbage-collector.png)
+
+**G1 收集器在后台维护了一个优先列表，每次根据允许的收集时间，优先选择回收价值最大的 Region(这也就是它的名字 Garbage-First 的由来)** 。这种使用 Region 划分内存空间以及有优先级的区域回收方式，保证了 G1 收集器在有限时间内可以尽可能高的收集效率（把内存化整为零）。
+
+**从 JDK9 开始，G1 垃圾收集器成为了默认的垃圾收集器。**
 
 
 
