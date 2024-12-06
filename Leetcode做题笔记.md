@@ -101,7 +101,7 @@
 
    **解题思路（分组 + 哈希表，O（n^2^））：**
 
-   ![image-20240306202241664](.\assets\image-20240306202241664.png)
+   ![image-20240306202241664](assets\image-20240306202241664.png)
 
    **解题代码：**
 
@@ -168,7 +168,7 @@
 
    **解题思路：**
 
-   ![image-20240124185728764](.\assets\image-20240124185728764.png)
+   ![image-20240124185728764](assets\image-20240124185728764.png)
 
    **解题代码：**不多说了，直接放上别人的优秀题解
 
@@ -213,7 +213,7 @@
 
    **解题思路：**先从左往右循环，找到高度递增的柱子，并计算相邻两根柱子之间的接雨量，此时循环完之后即可得知最高柱子的下标。然后再从右往左循环（循环到最高柱子的下标即可），按照从左往右循环相反的逻辑，找到从右往左递增的柱子，并计算相邻两根柱子之间的接雨量。如此汇总即可得出总的接雨量。
 
-   ![image-20240126223144361](.\assets\image-20240126223144361.png)
+   ![image-20240126223144361](assets\image-20240126223144361.png)
 
    **解题代码：**
 
@@ -273,9 +273,9 @@
 
    **解题思路：**
 
-   ![image-20240306212801824](.\assets\image-20240306212801824.png)
+   ![image-20240306212801824](assets\image-20240306212801824.png)
 
-   ![image-20240306212814735](.\assets\image-20240306212814735.png)
+   ![image-20240306212814735](assets\image-20240306212814735.png)
 
    **解题代码：**
 
@@ -398,7 +398,7 @@
 
    **解题思路：**主要介绍`O(N)`算法（**前缀和 + 哈希表优化**）
 
-   ![image-20240125192634016](.\assets\image-20240125192634016.png)
+   ![image-20240125192634016](assets\image-20240125192634016.png)
 
    ```java
    class Solution {
@@ -425,7 +425,7 @@
 
    **解题思路（单调队列）：**
 
-   ![image-20240126223852331](.\assets\image-20240126223852331.png)
+   ![image-20240126223852331](assets\image-20240126223852331.png)
 
    **解题代码：**
 
@@ -469,7 +469,7 @@
 
    **解题思路：**
 
-   ![image-20240305164220626](.\assets\image-20240305164220626.png)
+   ![image-20240305164220626](assets\image-20240305164220626.png)
 
    **解题代码：**
 
@@ -572,7 +572,7 @@
 
    **解题思路（标志法，原地算法）：**先将所有的负数都表示成一个大于N的数，然后遍历数组，把所有在 [1,*N*] 范围内的数对应下标（N-1）的元素置为负数。然后再次遍历处理后的数组，得到的第一个大于0的元素其对应的整数（下标+1）即为缺失的第一个正数。（若数组元素都小于0，则说明 N+1 是缺失的第一个正数）
 
-   ![image-20240126230706090](.\assets\image-20240126230706090.png)
+   ![image-20240126230706090](assets\image-20240126230706090.png)
 
    **解题代码：**
 
@@ -614,9 +614,9 @@
 
    **解题思路（变长数组 + 哈希表）：**
 
-   ![image-20240302212906316](.\assets\image-20240302212906316.png)
+   ![image-20240302212906316](assets\image-20240302212906316.png)
 
-   ![image-20240302212919718](.\assets\image-20240302212919718.png)
+   ![image-20240302212919718](assets\image-20240302212919718.png)
 
    **解题代码：**
 
@@ -717,7 +717,7 @@
 
    **解题思路（前缀和 + 二分查找）：**
 
-   ![image-20240303204519994](.\assets\image-20240303204519994.png)
+   ![image-20240303204519994](assets\image-20240303204519994.png)
 
    **解题代码：**
 
@@ -754,7 +754,7 @@
 
    **解题思路（滑动窗口）：**
 
-   ![image-20240303210425230](.\assets\image-20240303210425230.png)
+   ![image-20240303210425230](assets\image-20240303210425230.png)
 
    **解题代码：**
 
@@ -792,7 +792,7 @@
 
    返回所有串联子串在 `s` 中的开始索引。你可以以 **任意顺序** 返回答案。
 
-   **解题思路：**![image-20240307201516875](.\assets\image-20240307201516875.png)
+   **解题思路：**![image-20240307201516875](assets\image-20240307201516875.png)
 
    **解题代码（官方题解）：**
 
@@ -920,7 +920,7 @@
 
    **解题思路：**这题不是很难，下面提供一种我没想到的巧妙思路（**Z 字形查找**，时间复杂度`O(m+n)`，空间复杂度`O(1)`）
 
-   ![image-20240127202834803](.\assets\image-20240127202834803.png)
+   ![image-20240127202834803](assets\image-20240127202834803.png)
 
    **解题代码：**
 
@@ -1063,7 +1063,7 @@
 
    **解题思路（递归）：**
 
-   ![image-20240203191713250](.\assets\image-20240203191713250.png)
+   ![image-20240203191713250](assets\image-20240203191713250.png)
 
    **解题代码（递归）：**
 
@@ -1162,11 +1162,11 @@
 
    **解题思路：**
 
-   ![image-20240204201447927](.\assets\image-20240204201447927.png)
+   ![image-20240204201447927](assets\image-20240204201447927.png)
 
    ------
 
-   ![image-20240204201949939](.\assets\image-20240204201949939.png)
+   ![image-20240204201949939](assets\image-20240204201949939.png)
 
    **解题代码：**
 
@@ -1435,7 +1435,7 @@ void backtracking(参数) {
 
 3. [332. 重新安排行程 - 力扣（LeetCode）](https://leetcode.cn/problems/reconstruct-itinerary/description/)
 
-   **题目简述：**<img src=".\assets\image-20240828222121769.png" alt="image-20240828222121769" style="zoom: 67%;" />
+   **题目简述：**<img src="assets\image-20240828222121769.png" alt="image-20240828222121769" style="zoom: 67%;" />
 
    **解题思路：**这题类似于dfs（深度优先搜索），我的思路是用Map存储所有机票信息（设为Map<String, Map<String, Integer>>，要注意可能会出现多张相同的机票，所以要用Integer而不是Boolean），然后走常规回溯思路。直接看代码：
 
@@ -1771,7 +1771,7 @@ void backtracking(参数) {
 
    **题解（有助于理解动态规划）**：[198. 打家劫舍 - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber/solutions/138131/dong-tai-gui-hua-jie-ti-si-bu-zou-xiang-jie-cjavap/?envType=study-plan-v2&envId=top-100-liked)
 
-   **解题思路：**![image-20240213000831896](.\assets\image-20240213000831896.png)
+   **解题思路：**![image-20240213000831896](assets\image-20240213000831896.png)
 
    **解题代码：**
 
@@ -1804,7 +1804,7 @@ void backtracking(参数) {
 
    - 空间优化版
 
-     ![image-20240213000924460](.\assets\image-20240213000924460.png)
+     ![image-20240213000924460](assets\image-20240213000924460.png)
 
      ```java
      public int rob(int[] nums) {
@@ -1829,7 +1829,7 @@ void backtracking(参数) {
 
    **题目简述：**给你一个整数 `n` ，返回 *和为 `n` 的完全平方数的最少数量* 。
 
-   **解题思路：**![image-20240215133252295](.\assets\image-20240215133252295.png)
+   **解题思路：**![image-20240215133252295](assets\image-20240215133252295.png)
 
    **解题代码：**
 
@@ -1854,7 +1854,7 @@ void backtracking(参数) {
 
    **题目简述：**给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`。
 
-   **解题思路：**![image-20240216234251182](.\assets\image-20240216234251182.png)
+   **解题思路：**![image-20240216234251182](assets\image-20240216234251182.png)
 
    **解题代码：**
 
@@ -1890,7 +1890,7 @@ void backtracking(参数) {
 
    **题目简述：**给你一个整数数组 `nums` ，找到其中最长严格递增子序列的长度。**子序列** 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，`[3,6,2,7]` 是数组 `[0,3,1,6,2,2,7]` 的子序列。
 
-   **解题思路（解法一）：**![image-20240217192601972](.\assets\image-20240217192601972.png)
+   **解题思路（解法一）：**![image-20240217192601972](assets\image-20240217192601972.png)
 
    **解题代码（解法一：动态规划）：**
 
@@ -1919,7 +1919,7 @@ void backtracking(参数) {
 
    **解题思路（解法二：贪心 + 二分查找）：**
 
-   ![image-20240218195521318](.\assets\image-20240218195521318.png)
+   ![image-20240218195521318](assets\image-20240218195521318.png)
 
    **解题代码（解法二）：**
 
@@ -1961,7 +1961,7 @@ void backtracking(参数) {
 
    **题目简述：**给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
 
-   **解题思路（动态规划法）：**![image-20240218195200804](.\assets\image-20240218195200804.png)
+   **解题思路（动态规划法）：**![image-20240218195200804](assets\image-20240218195200804.png)
 
    **解题代码：**
 
@@ -1992,9 +1992,9 @@ void backtracking(参数) {
 
    **题目简述：**给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
 
-   **解题思路：**![image-20240219014555794](.\assets\image-20240219014555794.png)
+   **解题思路：**![image-20240219014555794](assets\image-20240219014555794.png)
 
-   ![image-20240219014614621](.\assets\image-20240219014614621.png)
+   ![image-20240219014614621](assets\image-20240219014614621.png)
 
    **解题代码（未优化空间复杂度版）：**
 
@@ -2039,7 +2039,7 @@ void backtracking(参数) {
 
    **解题代码（优化版）：**
 
-   ![image-20240219014750831](.\assets\image-20240219014750831.png)
+   ![image-20240219014750831](assets\image-20240219014750831.png)
 
    ```java
    class Solution {
@@ -2079,7 +2079,7 @@ void backtracking(参数) {
 
    **解题思路（动态规划）：**
 
-   ![image-20240225211307592](.\assets\image-20240225211307592.png)
+   ![image-20240225211307592](assets\image-20240225211307592.png)
 
    **解题代码：**
 
@@ -2105,7 +2105,7 @@ void backtracking(参数) {
 
    **解题思路（栈）：**
 
-   ![image-20240225213310567](.\assets\image-20240225213310567.png)
+   ![image-20240225213310567](assets\image-20240225213310567.png)
 
    **解题代码：**
 
@@ -2136,7 +2136,7 @@ void backtracking(参数) {
 
    [32. 最长有效括号 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-valid-parentheses/solutions/314683/zui-chang-you-xiao-gua-hao-by-leetcode-solution/)
 
-   ![image-20240225214940076](.\assets\image-20240225214940076.png)
+   ![image-20240225214940076](assets\image-20240225214940076.png)
 
    **解题代码：**
 
@@ -2186,7 +2186,7 @@ void backtracking(参数) {
 
    再以此类比来求二维前缀最小值：
 
-   <img src=".\assets\image-20240816191058617.png" alt="image-20240816191058617" style="zoom: 67%;" />
+   <img src="assets\image-20240816191058617.png" alt="image-20240816191058617" style="zoom: 67%;" />
 
    **解题代码：**
 
@@ -2252,9 +2252,9 @@ void backtracking(参数) {
 
    **解题思路一（动态规划，未优化）：**[376. 摆动序列 - 力扣（LeetCode）](https://leetcode.cn/problems/wiggle-subsequence/solutions/518296/bai-dong-xu-lie-by-leetcode-solution-yh2m/)
 
-   <img src=".\assets\image-20240916201523084.png" alt="image-20240916201523084" style="zoom:80%;" />
+   <img src="assets\image-20240916201523084.png" alt="image-20240916201523084" style="zoom:80%;" />
 
-   <img src=".\assets\image-20240916201553643.png" alt="image-20240916201553643" style="zoom:80%;" />
+   <img src="assets\image-20240916201553643.png" alt="image-20240916201553643" style="zoom:80%;" />
 
    **解题代码：**
 
@@ -2290,7 +2290,7 @@ void backtracking(参数) {
 
    针对思路一，由于最后结果只涉及up[n-1]和down[n-1]，所以只需要维护两个变量up和down来根据前一个状态来进行转移即可。
 
-   ![image-20240916203057549](.\assets\image-20240916203057549.png)
+   ![image-20240916203057549](assets\image-20240916203057549.png)
 
    **解题代码：**
 
@@ -2321,7 +2321,7 @@ void backtracking(参数) {
 
    力扣官方贪心思路如下（代码有所不同，个人觉得自己贴在下面的代码更简洁优雅）：
 
-   ![image-20240916203331946](.\assets\image-20240916203331946.png)
+   ![image-20240916203331946](assets\image-20240916203331946.png)
 
    **解题代码：**
 
@@ -2369,9 +2369,9 @@ void backtracking(参数) {
 
    **解题思路（动态规划）：**
 
-   ![image-20240223170529318](.\assets\image-20240223170529318.png)
+   ![image-20240223170529318](assets\image-20240223170529318.png)
 
-   ![image-20240223170546111](.\assets\image-20240223170546111.png)
+   ![image-20240223170546111](assets\image-20240223170546111.png)
 
    **解题代码：**
 
@@ -2430,7 +2430,7 @@ void backtracking(参数) {
 
    **解题思路（中心扩展算法）：**
 
-   ![image-20240223170921998](.\assets\image-20240223170921998.png)
+   ![image-20240223170921998](assets\image-20240223170921998.png)
 
    **解题代码：**
 
@@ -2515,7 +2515,7 @@ void backtracking(参数) {
    - 替换一个字符
 
    **解题思路：**动态规划：
-   ![image-20240223220238860](.\assets\image-20240223220238860.png)
+   ![image-20240223220238860](assets\image-20240223220238860.png)
 
    第一行，是 `word1` 为空变成 `word2` 最少步数，就是插入操作
 
@@ -2587,9 +2587,9 @@ void backtracking(参数) {
 
    https://leetcode.cn/problems/longest-palindromic-subsequence/solutions/15118/dong-tai-gui-hua-si-yao-su-by-a380922457-3/   （力扣精选题解）
 
-   <img src=".\assets\image-20240918224909790.png" alt="image-20240918224909790" style="zoom:80%;" />
+   <img src="assets\image-20240918224909790.png" alt="image-20240918224909790" style="zoom:80%;" />
 
-   <img src=".\assets\image-20240918224934089.png" alt="image-20240918224934089" style="zoom:80%;" />
+   <img src="assets\image-20240918224934089.png" alt="image-20240918224934089" style="zoom:80%;" />
 
    **解题代码：**
 
@@ -2670,13 +2670,13 @@ void backtracking(参数) {
 
 1. [84. 柱状图中最大的矩形 - 力扣（LeetCode）](https://leetcode.cn/problems/largest-rectangle-in-histogram/description/?envType=study-plan-v2&envId=top-100-liked)
 
-   **题目简述：**![image-20240224205522446](.\assets\image-20240224205522446.png)
+   **题目简述：**![image-20240224205522446](assets\image-20240224205522446.png)
 
    **解题思路1（单调栈）：**[84. 柱状图中最大的矩形 - 力扣（LeetCode）](https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/108083/84-by-ikaruga/?envType=study-plan-v2&envId=top-100-liked)
 
-   ![image-20240224205613650](.\assets\image-20240224205613650.png)
+   ![image-20240224205613650](assets\image-20240224205613650.png)
 
-   ![image-20240224205721954](.\assets\image-20240224205721954.png)
+   ![image-20240224205721954](assets\image-20240224205721954.png)
 
    **解题代码（两个他人的题解&一个自己的题解）：**
 
@@ -2859,7 +2859,7 @@ void backtracking(参数) {
 
    **解题思路一（基于快速排序的选择方法）：**
 
-   ![image-20240220192235360](.\assets\image-20240220192235360.png)
+   ![image-20240220192235360](assets\image-20240220192235360.png)
 
    **解题代码：**
 
@@ -3106,7 +3106,7 @@ void backtracking(参数) {
 
    **解题思路一（优先队列）：**
 
-   ![image-20240221013842259](.\assets\image-20240221013842259.png)
+   ![image-20240221013842259](assets\image-20240221013842259.png)
 
    **解题代码：**
 
@@ -3143,7 +3143,7 @@ void backtracking(参数) {
    }
    ```
 
-   **解题思路二（有序集合 + 双指针）：**![image-20240221014009940](.\assets\image-20240221014009940.png)
+   **解题思路二（有序集合 + 双指针）：**![image-20240221014009940](assets\image-20240221014009940.png)
 
    **解题代码：**
 
@@ -3187,7 +3187,7 @@ void backtracking(参数) {
 
    **题目简述：**给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。
 
-   **解题思路：**该题目的解法众多，这里只介绍最为巧妙的时间复杂度为 O(n)、空间复杂度为 O(1) 的算法(**Boyer-Moore 投票算法**)。![image-20240219183329622](.\assets\image-20240219183329622.png)
+   **解题思路：**该题目的解法众多，这里只介绍最为巧妙的时间复杂度为 O(n)、空间复杂度为 O(1) 的算法(**Boyer-Moore 投票算法**)。![image-20240219183329622](assets\image-20240219183329622.png)
 
    **解题代码：**
 
@@ -3304,13 +3304,13 @@ void backtracking(参数) {
 
    **解题思路：**[31. 下一个排列 - 力扣（LeetCode）](https://leetcode.cn/problems/next-permutation/solutions/80560/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/?envType=study-plan-v2&envId=top-100-liked)
 
-   ![image-20240219232201934](.\assets\image-20240219232201934.png)
+   ![image-20240219232201934](assets\image-20240219232201934.png)
 
-   ![image-20240219232212766](.\assets\image-20240219232212766.png)
+   ![image-20240219232212766](assets\image-20240219232212766.png)
 
-   <img src=".\assets\image-20240219232227788.png" alt="image-20240219232227788"  /><img src=".\assets\image-20240219232246705.png" alt="image-20240219232246705"  />
+   <img src="assets\image-20240219232227788.png" alt="image-20240219232227788"  /><img src="assets\image-20240219232246705.png" alt="image-20240219232246705"  />
 
-   ![image-20240219232425716](.\assets\image-20240219232425716.png)![image-20240219232439059](.\assets\image-20240219232439059.png)![image-20240219232455564](.\assets\image-20240219232455564.png)
+   ![image-20240219232425716](assets\image-20240219232425716.png)![image-20240219232439059](assets\image-20240219232439059.png)![image-20240219232455564](assets\image-20240219232455564.png)
 
    **解题代码：**
 
