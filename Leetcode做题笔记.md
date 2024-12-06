@@ -11,7 +11,36 @@
    **解题思路1：**对每个输入的字符串按字母排序（sort）之后，再比对已有的Hash表，来判断是否属于同一个单词。这里排序是关键，可以省去一个个字母比对的时间。**（在字符串和数组当中，当每个元素的顺序不重要时，可以使用排序后的字符串或数组作为键）**
 
    > - **注意，sort的关键是用`Arrays.sort(char[])`**
-   > - 个人题解放在哈希目录下：`.\哈希\group-anagrams.java`
+
+   **解题代码：**
+
+   ```java
+   import java.util.*;
+   
+   class Solution {
+       public List<List<String>> groupAnagrams(String[] strs) {
+           List<List<String>> result = new ArrayList<>();
+           Map<String,Integer> hashmap = new HashMap<>();
+           for(String str:strs){
+               char[] temp = str.toCharArray();
+               Arrays.sort(temp);
+               String tempStr = String.valueOf(temp);
+               if(hashmap.containsKey(tempStr)){
+                   List<String> list = result.get(hashmap.get(tempStr));
+                   list.add(str);
+               }else {
+                   hashmap.put(tempStr,hashmap.size());
+                   List<String > newList = new ArrayList<>();
+                   newList.add(str);
+                   result.add(newList);
+               }
+           }
+   
+           return result;
+       }
+   }
+   
+   ```
 
    **解题思路2（未尝试）：**用质数表示26个字母，把字符串的各个字母相乘，这样可保证字母异位词的乘积必定是相等的。其余步骤就是用map存储。
 
@@ -109,7 +138,29 @@
 
    **解题思路：**`O(N)`算法，一开始两个指针一个指向开头一个指向结尾，此时容器的底是最大的，接下来随着指针向内移动，会造成容器的底变小，在这种情况下想要让容器盛水变多，就只有在容器的高上下功夫。 那我们该如何决策哪个指针移动呢？我们能够发现不管是左指针向右移动一位，还是右指针向左移动一位，容器的底都是一样的，都比原来减少了 1。这种情况下我们想要让指针移动后的容器面积增大，就要使移动后的容器的高尽量大，所以我们选择指针所指的高较小的那个指针进行移动，这样我们就保留了容器较高的那条边，放弃了较小的那条边，以获得有更高的边的机会。
 
-   > 个人题解放在双指针目录下：`.\双指针\container-with-most-water.java`
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int maxArea(int[] height) {
+           int maxV=0;
+           // 初始情况下容器底最大
+           int left=0, right=height.length-1;
+           // 左右指针往里缩的时候底变小，所以要期望高变大
+           while(left<right){
+               int minHeight = Math.min(height[left], height[right]);
+               maxV=Math.max(maxV,minHeight*(right-left));
+               // 总是移动高度较小那一边的指针，以期获得更大的高
+               if(height[left]<height[right]){
+                   left++;
+               }else{
+                   right--;
+               }
+           }
+           return maxV;
+       }
+   }
+   ```
 
 2. [15. 三数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/3sum/description/?envType=study-plan-v2&envId=top-100-liked)
 
@@ -162,9 +213,55 @@
 
    **解题思路：**先从左往右循环，找到高度递增的柱子，并计算相邻两根柱子之间的接雨量，此时循环完之后即可得知最高柱子的下标。然后再从右往左循环（循环到最高柱子的下标即可），按照从左往右循环相反的逻辑，找到从右往左递增的柱子，并计算相邻两根柱子之间的接雨量。如此汇总即可得出总的接雨量。
 
-   > 个人题解放在双指针目录下：`.\双指针\trapping-rain-water.java`
-
    ![image-20240126223144361](D:\Desktop\Leetcode\assets\image-20240126223144361.png)
+
+   **解题代码：**
+
+   ```java
+   // 个人题解
+   class Solution {
+       public int trap(int[] height) {
+           int total=0;
+           int len = height.length;
+           int left=-1,right = len;
+           if(len<3){
+               return 0;
+           }
+           // 从左往右循环，边计算左边能接的雨水量（相对于最高柱子而言），边记录最高的柱子下标
+           for(int i=0;i<len;i++){
+               if(left==-1 && i<len-1 && height[i]>height[i+1]){
+                   left=i;
+                   continue;
+               }
+               // 从左往右递增，找到后面比现在高的柱子，计算接雨量
+               if(left>=0 && height[i]>=height[left]){
+                   for(int j=left+1;j<i;j++){
+                       total+=height[left]-height[j];
+                   }
+                   left=i;
+               }
+           }
+           if(left<0){
+               return 0;
+           }
+           // 此时 left 即最高的下标(只需循环到最高柱子的下标即可)，从右往左计算右边的接雨量
+           for(int i=len-1;i>=left;i--){
+               if(right==len && i>0 && height[i]>height[i-1]){
+                   right=i;
+                   continue;
+               }
+               // 右边和左边的逻辑刚好相反，从右往左递增，找到前面比现在高的柱子，计算接雨量
+               if(right<len&&height[i]>=height[right]){
+                   for(int j=i+1;j<right;j++){
+                       total+=height[right]-height[j];
+                   }
+                   right=i;
+               }
+           }
+           return total;
+       }
+   }
+   ```
 
 4. [18. 四数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/4sum/description/)
 
@@ -239,6 +336,58 @@
    }
    ```
 
+5. [1574. 删除最短的子数组使剩余数组有序 - 力扣（LeetCode）](https://leetcode.cn/problems/shortest-subarray-to-be-removed-to-make-array-sorted/description/)
+
+   **题目简述：**给你一个整数数组 `arr` ，请你删除一个子数组（可以为空），使得 `arr` 中剩下的元素是 **非递减** 的。
+
+   一个子数组指的是原数组中连续的一个子序列。请你返回满足题目要求的最短子数组的长度。
+
+   **解题思路：**`O(N)`双指针
+   考虑删掉一个子数组后的结果：
+
+   - 假如只剩下一段（从开头或结尾删除），就要求这一段有序
+   - 对于一般情况，剩下两段，则要求前一段有序，后一段有序，而且分点有序(左分点<=右分点)
+
+   我们可以枚举左分点，并尝试找到离它最近的右分点。由于前后都必须有序，也就是说左分点之前必须有序，右分点之后必须有序。
+   可以先找到左边的有序段最远处，设为`i`，左分点只可能在0~i中产生。当左分点向前移动时，由于右段的单调性，最近右分点也一定是不会向后的。所以可以从后往前枚举左分点，同时从后往前枚举右分点。
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public static int findLengthOfShortestSubarray(int[] arr) {
+           int left = 0;
+           int right = arr.length - 1;
+           while (left < arr.length - 1 && arr[left] <= arr[left + 1]) {
+               left++;
+           }
+           if (left == arr.length - 1) {
+               return 0;
+           }
+   
+           while (right >= 1 && arr[right] >= arr[right - 1]) {
+               right--;
+           }
+   
+           int max = Math.max(left + 1, arr.length - right);
+           int rightIndex = arr.length;
+           for (int i = left; i >= 0; i--) {
+               while (rightIndex > right && arr[rightIndex - 1] >= arr[i]) {
+                   rightIndex--;
+               }
+               int tempMax = i + 1 + arr.length - rightIndex;
+               if (tempMax > max) {
+                   max = tempMax;
+               }
+           }
+   
+           return arr.length - max;
+       }
+   }
+   ```
+
+   
+
 
 
 ## 子串
@@ -278,7 +427,39 @@
 
    ![image-20240126223852331](D:\Desktop\Leetcode\assets\image-20240126223852331.png)
 
-   > 个人题解放在子串目录下：`.\子串\sliding-window-maximum.java`
+   **解题代码：**
+
+   ```java
+   import java.util.Deque;
+   import java.util.LinkedList;
+   
+   class Solution {
+       public int[] maxSlidingWindow(int[] nums, int k) {
+           int[] res = new int[nums.length-k+1];
+           Deque<Integer> deque = new LinkedList<>(); // 单调队列，存储下标
+           for(int i=0;i<k;i++){
+               while(!deque.isEmpty()&&nums[i]>nums[deque.getLast()]){
+                   deque.removeLast();
+               }
+               deque.addLast(i);
+           }
+           res[0]=nums[deque.getFirst()];
+           for (int i=k;i< nums.length;i++){
+               // 清理队尾
+               while(!deque.isEmpty()&&nums[i]>nums[deque.getLast()]){
+                   deque.removeLast();
+               }
+               deque.addLast(i);
+               // 判断队首是否还在滑动窗口内
+               while (deque.getFirst()<=i-k){
+                   deque.removeFirst();
+               }
+               res[i-k+1]=nums[deque.getFirst()];
+           }
+           return res;
+       }
+   }
+   ```
 
    
 
@@ -1015,7 +1196,7 @@
            //计算右边分支最大值，右边分支如果为负数还不如不选择
            int rightMax = Math.max(0, maxGain(root.right));
            //left->root->right 作为路径与已经计算过历史最大值做比较
-           max = Math.max(max, root.val + leftMax + rightMax);
+           maxSum = Math.max(maxSum, root.val + leftMax + rightMax);
            // 返回经过root的单边最大分支给当前root的父节点计算使用
            return root.val + Math.max(leftMax, rightMax);
        }
@@ -1098,6 +1279,23 @@
 
 ## 回溯
 
+回溯算法模版：
+
+```java
+void backtracking(参数) {
+    if (终止条件) {
+        存放结果;
+        return;
+    }
+
+    for (选择：本层集合中元素（树中节点孩子的数量就是集合的大小）) {
+        处理节点;
+        backtracking(路径，选择列表); // 递归
+        回溯，撤销处理结果
+    }
+}
+```
+
 1. [78. 子集 - 力扣（LeetCode）](https://leetcode.cn/problems/subsets/description/?envType=study-plan-v2&envId=top-100-liked)
 
    **题目简述：**给定一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的子集（幂集）。解集 **不能** 包含重复的子集。
@@ -1125,9 +1323,9 @@
        }
    }
    ```
-   
+
    **解法二（递归官方版）：**采用深度优先搜索来递归，`dfs(cur,nums)`中的`cur`表示当前位置，通过根据当前位置对应的整数是否出现在子集中，可以分为两条支路，从而进行`dfs`递归，直到`cur==nums.length`，此时表示数组中的所有整数是否出现都已经被确认，然后将数组记录下来。
-   
+
    ```java
    class Solution {
        List<Integer> t = new ArrayList<Integer>();
@@ -1156,7 +1354,7 @@
    ```
 
    **解法三（自己写的递归）：**为了避免添加重复的子集，规定子集中的整数要满足递增的顺序，否则就不添加到结果中。（在递归的每一层都可能产生新的子集添加到结果中，因为子集的大小从0增加到数组的大小）
-   
+
    ```java
    class Solution {
        List<List<Integer>> res = new ArrayList<>();
@@ -1194,8 +1392,220 @@
        }
    }
    ```
+
+2. [491. 非递减子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/non-decreasing-subsequences/description/)
+
+   **题目简述：**给你一个整数数组 `nums` ，找出并返回所有该数组中不同的递增子序列，递增子序列中 **至少有两个元素** 。你可以按 **任意顺序** 返回答案。数组中可能含有重复元素，如出现两个整数相等，也可以视作递增序列的一种特殊情况。
+
+   **解法注意点：**回溯过程中同层节点不能重复，所以需要用set来记录已遍历过的的节点来去重（因为没有排序，所以可能出现相同的元素分散遍历，此时通过常规比较前后元素是否相同无法达到去重的效果，因此需要用set来记录）
+
+   **详解链接：**[代码随想录 (programmercarl.com)](https://programmercarl.com/0491.递增子序列.html#思路)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       List<List<Integer>> list = new ArrayList<>();
+       // List<Integer> tempList = new ArrayList<>();
    
+       public List<List<Integer>> findSubsequences(int[] nums) {
+           backTracking(nums, new ArrayList<>(), 0);
+           return list;
+       }
    
+       void backTracking(int[] nums, List<Integer> tempList, int start) {
+           if (tempList.size() >= 2) {
+               list.add(new ArrayList<>(tempList));
+           }
+           Set<Integer> set = new HashSet<>(); // 记录同一层已经遍历过的元素
+           for (int i = start; i < nums.length; i++) {
+               set.add(nums[i]);
+               if (tempList.size() == 0 || (tempList.size() > 0 && nums[i] >= tempList.get(tempList.size() - 1))) {
+                   tempList.add(nums[i]);
+                   backTracking(nums, tempList, i + 1);
+                   tempList.remove(tempList.size() - 1);
+               }
+               while (i < nums.length - 1 && set.contains(nums[i+1])) {
+                   i++; // 同一层已经遍历过的元素需要跳过
+               }
+           }
+       }
+   }
+   ```
+
+3. [332. 重新安排行程 - 力扣（LeetCode）](https://leetcode.cn/problems/reconstruct-itinerary/description/)
+
+   **题目简述：**<img src="D:\Desktop\Leetcode\assets\image-20240828222121769.png" alt="image-20240828222121769" style="zoom: 67%;" />
+
+   **解题思路：**这题类似于dfs（深度优先搜索），我的思路是用Map存储所有机票信息（设为Map<String, Map<String, Integer>>，要注意可能会出现多张相同的机票，所以要用Integer而不是Boolean），然后走常规回溯思路。直接看代码：
+
+   代码随想录详解链接：[代码随想录 (programmercarl.com)](https://programmercarl.com/0332.重新安排行程.html#其他语言版本)
+
+   **解题代码一（我的常规代码，会超时）：**
+
+   ```java
+   public class Solution{
+   	List<String> res = new ArrayList<>();
+   
+       Map<String, List<String>> map = new HashMap<>();
+       Map<String, Map<String, Integer>> visitMap = new HashMap<>();
+   
+       public List<String> findItinerary(List<List<String>> tickets) {
+           for (List<String> ticket : tickets) {
+               String key = ticket.get(0);
+               String val = ticket.get(1);
+               if (map.containsKey(key)) {
+                   map.get(key).add(val);
+                   Map<String, Integer> countMap = visitMap.get(key);
+                   visitMap.get(key).put(val, countMap.getOrDefault(val, 0) + 1);
+               } else {
+                   List<String> list = new ArrayList<>();
+                   list.add(val);
+                   Map<String, Integer> flagMap = new HashMap<>();
+                   flagMap.put(val, 1);
+                   map.put(key, list);
+                   visitMap.put(key, flagMap);
+               }
+           }
+           for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+               Collections.sort(entry.getValue());
+           }
+           res.add("JFK");
+           backTracking(tickets.size() + 1, "JFK");
+           return res;
+       }
+   
+       boolean backTracking(int count, String key) {
+           if (res.size() == count) {
+               return true;
+           }
+           if (!map.containsKey(key)) {
+               return false;
+           }
+           for (String val : map.get(key)) {
+               if (visitMap.get(key).get(val) == 0) {
+                   continue;
+               }
+               res.add(val);
+               visitMap.get(key).put(val, visitMap.get(key).get(val) - 1);
+               if (backTracking(count, val)) {
+                   return true;
+               } else {
+                   res.remove(res.size() - 1);
+                   visitMap.get(key).put(val, visitMap.get(key).get(val) + 1);
+               }
+           }
+           return false;
+       }
+   }
+   ```
+
+   > 超时原因是因为不仅遍历了tickets把数据存到map中，还在最后进行了排序，不仅空间复杂度大，时间复杂度也提高了。优化思路，把两个map合起来，直接用 Map<String, Map<String, Integer>> （或直接用Map<String, TreeMap<String, Integer>>）存储，其中 value 的类型为TreeMap，这样在存储的时候会自动按字典序排序，下面是优化的代码
+
+   **解题代码二（优化版）：**
+
+   ```java
+   class Solution {
+       List<String> res = new ArrayList<>();
+   
+       Map<String, Map<String, Integer>> map = new HashMap<>();
+   
+       public List<String> findItinerary(List<List<String>> tickets) {
+           for (List<String> ticket : tickets) {
+               String key = ticket.get(0);
+               String val = ticket.get(1);
+               if (map.containsKey(key)) {
+                   Map<String, Integer> treeMap = map.get(key);
+                   map.get(key).put(val, treeMap.getOrDefault(val, 0) + 1);
+               } else {
+                   // 用TreeMap来存储，这样会根据key来排序（达到了自动排序的效果）
+                   TreeMap<String, Integer> treeMap = new TreeMap<>();
+                   treeMap.put(val, 1);
+                   map.put(key, treeMap);
+               }
+           }
+           res.add("JFK");
+           backTracking(tickets.size() + 1, "JFK");
+           return res;
+       }
+   
+       boolean backTracking(int size, String key) {
+           if (res.size() == size) {
+               return true;
+           }
+           if (!map.containsKey(key)) {
+               return false;
+           }
+           for (Map.Entry<String, Integer> entry : map.get(key).entrySet()) {
+               int count = entry.getValue();
+               if (count == 0) {
+                   continue;
+               }
+               res.add(entry.getKey());
+               entry.setValue(count-1);
+               if (backTracking(size, entry.getKey())) {
+                   return true;
+               } else {
+                   res.remove(res.size() - 1);
+                   entry.setValue(count);
+               }
+           }
+           return false;
+       }
+   }
+   ```
+
+   
+
+## BFS
+
+1. [LCP 09. 最小跳跃次数 - 力扣（LeetCode）](https://leetcode.cn/problems/zui-xiao-tiao-yue-ci-shu/description/)
+
+   **题目简述：**游戏机由 `N` 个特殊弹簧排成一排，编号为 `0` 到 `N-1`。初始有一个小球在编号 `0` 的弹簧处。若小球在编号为 `i` 的弹簧处，通过按动弹簧，可以选择把小球向右弹射 `jump[i]` 的距离，或者向左弹射到任意左侧弹簧的位置。也就是说，在编号为 `i` 弹簧处按动弹簧，小球可以弹向 `0` 到 `i-1` 中任意弹簧或者 `i+jump[i]` 的弹簧（若 `i+jump[i]>=N` ，则表示小球弹出了机器）。小球位于编号 0 处的弹簧时不能再向左弹。为了获得奖励，你需要将小球弹出机器。请求出最少需要按动多少次弹簧，可以将小球从编号 `0` 弹簧弹出整个机器，即向右越过编号 `N-1` 的弹簧。
+
+   **解题思路一（BFS）：**采用广度优先搜索的算法思想，初始化step为0，然后逐层递增step，并把当前step能够跳到的并且之前没有遍历过的下标放进队列中，为了优化往前跳的遍历，记录下每次已经遍历过的最大的下标max。在每一层中取出队列中的下标，做如下判断：1、如果当前下标加上jump[i]能够跳出机器，则直接返回step+1   2、判断当前下标加上jump[i]的下标是否被访问过，若没有，则加入队列中    3、如果当前下标比max大，则把所有max下标之后的未被访问的下标加入队列中，然后更新max
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public static int minJump(int[] jump) {
+           Deque<Integer> queue = new ArrayDeque<>(); // 用于记录每一层（给定跳跃步数）所能跳到的位置
+           int max = 0; // 记录下每一层（给定跳跃步数）所能跳到的最大下标
+           int step = 0; // 记录跳跃次数
+           boolean[] flag = new boolean[jump.length]; // 记录每个位置是否已经被遍历过
+           queue.offer(0);
+           flag[0] = true;
+           while (!queue.isEmpty()) {
+               int size = queue.size();
+               for (int i = 0; i < size; i++) {
+                   int x = queue.poll();
+                   if (x + jump[x] >= jump.length) {
+                       return step + 1;
+                   }
+                   if (!flag[x + jump[x]]) {
+                       queue.offer(x + jump[x]);
+                       flag[x + jump[x]] = true;
+                   }
+                   if (x > max) {
+                       for (int j = max + 1; j < x; j++) {
+                           queue.offer(j);
+                           flag[j] = true;
+                       }
+                       max = x;
+                   }
+                   
+               }
+               step++;
+           }
+           return -1;
+       }
+   }
+   ```
+
+   
+
+
 
 ## 二分查找
 
@@ -1764,7 +2174,192 @@
    }
    ```
 
+8. [3148. 矩阵中的最大得分 - 力扣（LeetCode）](https://leetcode.cn/problems/maximum-difference-score-in-a-grid/description/)
+
+   **题目简述：**给你一个由 **正整数** 组成、大小为 `m x n` 的矩阵 `grid`。你可以从矩阵中的任一单元格移动到另一个位于正下方或正右侧的任意单元格（不必相邻）。从值为 `c1` 的单元格移动到值为 `c2` 的单元格的得分为 `c2 - c1` 。你可以从 **任一** 单元格开始，并且必须至少移动一次。返回你能得到的 **最大** 总得分。
+
+   **解题思路（二维前缀最小值）：**
+
+   先了解解决二位前缀和的思路：[3148. 矩阵中的最大得分 - 力扣（LeetCode）](https://leetcode.cn/problems/maximum-difference-score-in-a-grid/solutions/2774823/nao-jin-ji-zhuan-wan-dppythonjavacgo-by-swux7/)
+
+   <img src="https://pic.leetcode.cn/1692152740-dSPisw-matrix-sum.png" alt="matrix-sum.png" style="zoom: 25%;" />
+
+   再以此类比来求二维前缀最小值：
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240816191058617.png" alt="image-20240816191058617" style="zoom: 67%;" />
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int maxScore(List<List<Integer>> grid) {
+           int y = grid.get(0).size();
+           int x = grid.size();
+           int MAX = Integer.MIN_VALUE;
+           int[][] f = new int[x + 1][y + 1];
+           Arrays.fill(f[0], Integer.MAX_VALUE);
+           for (int i = 0; i < x; i++) {
+               f[i + 1][0] = Integer.MAX_VALUE;
+               for (int j = 0; j < y; j++) {
+                   int temp = Math.min(f[i][j + 1], f[i + 1][j]);
+                   MAX = Math.max(MAX, grid.get(i).get(j) - temp);
+                   f[i+1][j+1] = Math.min(temp,grid.get(i).get(j));
+               }
+           }
+           return MAX;
+       }
+   }
+   ```
+
+   **优化：**维护每列的最小值 *colMin*，这样空间复杂度更小
+
+   ```java
+   class Solution {
+       public int maxScore(List<List<Integer>> grid) {
+           int ans = Integer.MIN_VALUE;
+           int n = grid.get(0).size();
+           int[] colMin = new int[n];
+           Arrays.fill(colMin, Integer.MAX_VALUE);
+           for (List<Integer> row : grid) {
+               int preMin = Integer.MAX_VALUE; // colMin[0..j] 的最小值
+               for (int j = 0; j < n; j++) {
+                   int x = row.get(j);
+                   ans = Math.max(ans, x - Math.min(preMin, colMin[j]));
+                   colMin[j] = Math.min(colMin[j], x);
+                   preMin = Math.min(preMin, colMin[j]);
+               }
+           }
+           return ans;
+       }
+   }
    
+   作者：灵茶山艾府
+   链接：https://leetcode.cn/problems/maximum-difference-score-in-a-grid/solutions/2774823/nao-jin-ji-zhuan-wan-dppythonjavacgo-by-swux7/
+   来源：力扣（LeetCode）
+   著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+   ```
+
+9. [376. 摆动序列 - 力扣（LeetCode）](https://leetcode.cn/problems/wiggle-subsequence/description/)
+
+   **题目简述：**如果连续数字之间的差严格地在正数和负数之间交替，则数字序列称为 **摆动序列 。**第一个差（如果存在的话）可能是正数或负数。仅有一个元素或者含两个不等元素的序列也视作摆动序列。
+
+   - 例如， `[1, 7, 4, 9, 2, 5]` 是一个 **摆动序列** ，因为差值 `(6, -3, 5, -7, 3)` 是正负交替出现的。
+   - 相反，`[1, 4, 7, 2, 5]` 和 `[1, 7, 4, 5, 5]` 不是摆动序列，第一个序列是因为它的前两个差值都是正数，第二个序列是因为它的最后一个差值为零。
+
+   **子序列** 可以通过从原始序列中删除一些（也可以不删除）元素来获得，剩下的元素保持其原始顺序。
+
+   给你一个整数数组 `nums` ，返回 `nums` 中作为 **摆动序列** 的 **最长子序列的长度** 。
+
+   **解题思路一（动态规划，未优化）：**[376. 摆动序列 - 力扣（LeetCode）](https://leetcode.cn/problems/wiggle-subsequence/solutions/518296/bai-dong-xu-lie-by-leetcode-solution-yh2m/)
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240916201523084.png" alt="image-20240916201523084" style="zoom:80%;" />
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240916201553643.png" alt="image-20240916201553643" style="zoom:80%;" />
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int wiggleMaxLength(int[] nums) {
+           if (nums.length < 2) {
+               return nums.length;
+           }
+           int[] up = new int[nums.length];
+           int[] down = new int[nums.length];
+           up[0]=down[0]=1;
+           
+           for(int i=1;i< nums.length;i++){
+               if(nums[i]>nums[i-1]){
+                   up[i]=Math.max(up[i-1],down[i-1]+1);
+                   down[i]=down[i-1];
+               } else if (nums[i]<nums[i-1]) {
+                   down[i]=Math.max(down[i-1],up[i-1]+1);
+                   up[i]=up[i-1];
+               } else {
+                   up[i]=up[i-1];
+                   down[i]=down[i-1];
+               }
+           }
+   
+           return Math.max(up[nums.length-1],down[nums.length-1]);
+       }
+   }
+   ```
+
+   **解题思路二（优化版动态规划）：**
+
+   针对思路一，由于最后结果只涉及up[n-1]和down[n-1]，所以只需要维护两个变量up和down来根据前一个状态来进行转移即可。
+
+   ![image-20240916203057549](D:\Desktop\Leetcode\assets\image-20240916203057549.png)
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public int wiggleMaxLength(int[] nums) {
+           if (nums.length < 2) {
+               return nums.length;
+           }
+           int up = 1, down = 1;
+   
+           for (int i = 1; i < nums.length; i++) {
+               if (nums[i] > nums[i - 1]) {
+                   up = down + 1;
+               } else if (nums[i] < nums[i - 1]) {
+                   down = up + 1;
+               }
+           }
+   
+           return Math.max(up, down);
+       }
+   }
+   ```
+
+   
+
+   **解题思路三（计算全局递增/递减改变次数，也可以理解为贪心算法）：**只要统计递增/递减的变化次数即可（即为答案）
+
+   力扣官方贪心思路如下（代码有所不同，个人觉得自己贴在下面的代码更简洁优雅）：
+
+   ![image-20240916203331946](D:\Desktop\Leetcode\assets\image-20240916203331946.png)
+
+   **解题代码：**
+
+   ```java
+   public class Solutions {
+   	
+       // 只要统计递增/递减的变化次数即可（即为答案）
+       public int wiggleMaxLength(int[] nums) {
+           if (nums.length < 2) {
+               return nums.length;
+           }
+           int up = 0; // 判断之前序列的末尾是否递增（1：递增，0：未赋值，-1：递减）
+           int res = 1;
+   
+           for (int i = 1; i < nums.length; i++) {
+               if (nums[i] > nums[i - 1]) { // 当前是递增
+                   // 若先前是递减则增加改变次数并更新状态（递增or递减）
+                   if (up <= 0) {
+                       up = 1;
+                       res++;
+                   }
+               } else if (nums[i] < nums[i - 1]) { // 当前是递减
+                   // 若先前是递增则增加改变次数并更新状态（递增or递减）
+                   if (up >= 0) {
+                       up = -1;
+                       res++;
+                   }
+               }
+           }
+   
+           return res;
+       }
+   }
+   ```
+
+   
+
+
 
 ## 多维动态规划
 
@@ -1982,7 +2577,59 @@
    // 优化成一维的实质是只存储二维中的一行，然后在外层遍历中慢慢更新。
    ```
 
+4. [516. 最长回文子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-palindromic-subsequence/description/)
+
+   **题目简述：**给你一个字符串 `s` ，找出其中最长的回文子序列，并返回该序列的长度。
+
+   子序列定义为：不改变剩余字符顺序的情况下，删除某些字符或者不删除任何字符形成的一个序列。
+
+   **解题思路：**https://programmercarl.com/0516.%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E5%BA%8F%E5%88%97.html  （代码随想录）
+
+   https://leetcode.cn/problems/longest-palindromic-subsequence/solutions/15118/dong-tai-gui-hua-si-yao-su-by-a380922457-3/   （力扣精选题解）
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240918224909790.png" alt="image-20240918224909790" style="zoom:80%;" />
+
+   <img src="D:\Desktop\Leetcode\assets\image-20240918224934089.png" alt="image-20240918224934089" style="zoom:80%;" />
+
+   **解题代码：**
+
+   ```java
+   class Solution {
+       public static int longestPalindromeSubseq(String s) {
+           if (s.length() <= 1) {
+               return s.length();
+           }
+           int[][] dp = new int[s.length()][s.length()];
+           for (int i = 0; i < s.length(); i++) {
+               dp[i][i] = 1;
+           }
+           for (int i = 0; i < s.length() - 1; i++) {
+               if (s.charAt(i) == s.charAt(i + 1)) {
+                   dp[i][i + 1] = 2;
+               } else {
+                   dp[i][i + 1] = 1;
+               }
+           }
+           for (int len = 3; len <= s.length(); len++) {
+               for (int i = 0; i < s.length() - len + 1; i++) {
+                   if (s.charAt(i) == s.charAt(i + len - 1)) {
+                       dp[i][i + len - 1] = dp[i + 1][i + len - 2] + 2;
+                   } else {
+                       dp[i][i + len - 1] = Math.max(dp[i + 1][i + len - 1], dp[i][i + len - 2]);
+                   }
+               }
+           }
    
+           return dp[0][s.length()-1];
+       }
+   }
+   ```
+
+   
+
+
+
+
 
 ## 栈
 
@@ -2025,15 +2672,16 @@
 
    **题目简述：**![image-20240224205522446](D:\Desktop\Leetcode\assets\image-20240224205522446.png)
 
-   **解题思路：**[84. 柱状图中最大的矩形 - 力扣（LeetCode）](https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/108083/84-by-ikaruga/?envType=study-plan-v2&envId=top-100-liked)
+   **解题思路1（单调栈）：**[84. 柱状图中最大的矩形 - 力扣（LeetCode）](https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/108083/84-by-ikaruga/?envType=study-plan-v2&envId=top-100-liked)
 
    ![image-20240224205613650](D:\Desktop\Leetcode\assets\image-20240224205613650.png)
 
    ![image-20240224205721954](D:\Desktop\Leetcode\assets\image-20240224205721954.png)
 
-   **解题代码：**
+   **解题代码（两个他人的题解&一个自己的题解）：**
 
    ```java
+   // 他人题解
    class Solution {
        public int largestRectangleArea(int[] heights) {
            /*
@@ -2089,8 +2737,119 @@
        }
    }
    ```
-
    
+   
+   
+   ```java
+   // 自己的题解（用了数组模拟单调栈，运行速度会更快）
+   class Solution {
+       public int largestRectangleArea(int[] heights) {
+           int max = 0;
+           int[] stack = new int[heights.length + 2]; // 模拟单调栈（存储索引）
+           int topIndex = -1; // 栈顶索引
+           stack[++topIndex] = -1; // 先把最左侧的索引放进去（即0的左侧，-1）
+           for (int i = 0; i < heights.length; i++) {
+               if (topIndex == 0) {
+                   stack[++topIndex] = i;
+               } else {
+                   while (topIndex > 0 && heights[i] < heights[stack[topIndex]]) {
+                       int height = heights[stack[topIndex--]];
+                       int width = i - stack[topIndex] - 1;
+                       max = Math.max(max, height * width);
+                   }
+                   stack[++topIndex] = i;
+               }
+           }
+           // 最后还有把0放进去模拟一遍，防止出现漏算的情况（0即代表最后一根柱子右侧的高度，即0））
+           while (topIndex > 0 && 0 < heights[stack[topIndex]]) {
+               int height = heights[stack[topIndex--]];
+               int width = heights.length - stack[topIndex] - 1;
+               max = Math.max(max, height * width);
+           }
+           return max;
+       }
+   
+   }
+   ```
+   
+   
+   
+   ```java
+   // 代码随想录题解（有优化空间，可以用数组模拟单调栈，速度会更快）
+   class Solution {
+       public int largestRectangleArea(int[] heights) {
+           int[] newHeight = new int[heights.length + 2];
+           System.arraycopy(heights, 0, newHeight, 1, heights.length);
+           newHeight[heights.length+1] = 0;
+           newHeight[0] = 0;
+   
+           Stack<Integer> stack = new Stack<>();
+           stack.push(0);
+   
+           int res = 0;
+           for (int i = 1; i < newHeight.length; i++) {
+               while (newHeight[i] < newHeight[stack.peek()]) {
+                   int mid = stack.pop();
+                   int w = i - stack.peek() - 1;
+                   int h = newHeight[mid];
+                   res = Math.max(res, w * h);
+               }
+               stack.push(i);
+   
+           }
+           return res;
+       }
+   }
+   ```
+   
+   **解题思路2（双指针）：**[代码随想录 (programmercarl.com)](https://programmercarl.com/0084.柱状图中最大的矩形.html#双指针解法)，本质就是求每一个高度作为矩形高的情况下的最大宽度，然后遍历求出最大值
+   
+   **解题代码：**
+   
+   ```java
+   class Solution {
+       public int largestRectangleArea(int[] heights) {
+           int max = 0;
+           int[] minLeftIndex = new int[heights.length];
+           int[] minRightIndex = new int[heights.length];
+   
+           // 记录每个柱子 左边第一个小于该柱子的下标
+           minLeftIndex[0] = -1; // 注意这里初始化，防止下面while死循环
+           for (int i = 1; i < heights.length; i++) {
+               int j = i - 1;
+               // 这里不是用if，而是不断向左寻找的过程
+               while (j >= 0 && heights[j] >= heights[i]) {
+                   j = minLeftIndex[j];
+               }
+               minLeftIndex[i] = j;
+           }
+   
+           // 记录每个柱子 右边第一个小于该柱子的下标
+           minRightIndex[heights.length - 1] = heights.length; // 注意这里初始化，防止下面while死循环
+           for (int i = heights.length - 2; i >= 0; i--) {
+               int j = i + 1;
+               // 这里不是用if，而是不断向右寻找的过程
+               while (j < heights.length && heights[j] >= heights[i]) {
+                   j = minRightIndex[j];
+               }
+               minRightIndex[i] = j;
+           }
+   
+           // 遍历求最大
+           for (int i = 0; i < heights.length; i++) {
+               int width = minRightIndex[i] - minLeftIndex[i] - 1;
+               int tempMax = width * heights[i];
+               max = Math.max(max, tempMax);
+           }
+   
+           return max;
+       }
+   }
+   ```
+   
+   
+
+
 
 ## 堆
 
